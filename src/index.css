@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Paleta da bandeira sobre preto: verde, amarelo e azul (neon) + branco. */
+@theme {
+  --color-ink: #05070a;
+  --color-surface: #0a0e13;
+  --color-flag-green: #00b94a;
+  --color-flag-yellow: #ffdf00;
+  --color-flag-blue: #2f6bff;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-ink);
+  color: #e6e9ee;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-flag-yellow) 35%, transparent);
+}
+
+/* Feixes verticais de luz do hero (referência de layout), nas cores da bandeira */
+.hero-beams {
+  background:
+    radial-gradient(60% 55% at 50% 0%, color-mix(in oklab, var(--color-flag-green) 38%, transparent), transparent 70%),
+    radial-gradient(40% 40% at 78% 8%, color-mix(in oklab, var(--color-flag-yellow) 26%, transparent), transparent 70%),
+    radial-gradient(40% 45% at 22% 12%, color-mix(in oklab, var(--color-flag-blue) 30%, transparent), transparent 70%);
+}
+
+.hero-beams::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 38px);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 75%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 75%);
+}
+
+.text-gradient-flag {
+  background: linear-gradient(95deg, var(--color-flag-green), var(--color-flag-yellow) 55%, var(--color-flag-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
