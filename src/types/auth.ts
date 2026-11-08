@@ -13,19 +13,37 @@ export interface User {
   created_at: string;
 }
 
+export type Gender = "Masculino" | "Feminino" | "Outro";
+
 export interface DevProfile {
   dev_id: string;
   username: string | null;
   first_name: string | null;
   last_name: string | null;
   headline: string | null;
+  whatsapp: string | null;
   photo_url: string | null;
+  curriculum_url: string | null;
+  gender: Gender;
+  gender_label: string;
+  birth_date: string | null;
+  bio: string;
+  github_url: string | null;
+  linkedin_url: string | null;
+  site_url: string | null;
 }
 
 export interface CompanyProfile {
   company_id: string;
   full_name: string | null;
+  legal_name: string | null;
+  cnpj: string | null;
+  whatsapp: string | null;
   photo_url: string | null;
+  bio: string;
+  github_url: string | null;
+  linkedin_url: string | null;
+  website: string | null;
 }
 
 export interface Me {

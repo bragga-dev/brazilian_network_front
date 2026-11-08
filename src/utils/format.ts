@@ -70,3 +70,23 @@ export function formatProjectValue(project: Pick<Project, "min_value" | "max_val
 export function formatNumber(value: number): string {
   return value.toLocaleString("pt-BR");
 }
+
+const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+/** "2024-03-15" -> "mar/2024" (sem passar por Date: evita deslocamento de fuso). */
+export function formatMonthYear(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const [year, month] = iso.split("-");
+  return `${MONTHS[Number(month) - 1] ?? ""}/${year}`;
+}
+
+export function formatPeriod(start: string | null | undefined, end: string | null | undefined, current = false): string {
+  const from = formatMonthYear(start);
+  const to = current ? "atual" : formatMonthYear(end);
+  return [from, to].filter(Boolean).join(" – ");
+}
+
+export function formatCep(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+}

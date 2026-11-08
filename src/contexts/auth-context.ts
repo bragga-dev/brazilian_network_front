@@ -10,6 +10,8 @@ export interface AuthContextValue {
   login: (input: LoginInput) => Promise<void>;
   loginWithGoogle: (input: GoogleLoginInput) => Promise<{ created: boolean }>;
   logout: () => Promise<void>;
+  /** Recarrega /auth/me (ex.: depois de trocar foto ou editar o perfil). */
+  refreshMe: () => Promise<void>;
   /** Encerra a sessão só no cliente (conta excluída, logout em todos os dispositivos). */
   endSession: () => void;
 }

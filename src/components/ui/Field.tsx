@@ -40,3 +40,7 @@ export function Field({ label, error, hint, children, className }: FieldProps) {
     </label>
   );
 }
+
+export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
+  return <textarea className={cn(CONTROL, "min-h-28 resize-y", className)} {...props} />;
+}

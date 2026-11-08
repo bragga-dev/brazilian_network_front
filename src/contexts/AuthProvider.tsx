@@ -58,6 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [setSession],
   );
 
+  const refreshMe = useCallback(async () => {
+    setSession(await authService.me());
+  }, [setSession]);
+
   const endSession = useCallback(() => {
     tokenStore.clear();
     queryClient.clear();
@@ -74,8 +78,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient, setSession]);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ status, me, login, loginWithGoogle, logout, endSession }),
-    [status, me, login, loginWithGoogle, logout, endSession],
+    () => ({ status, me, login, loginWithGoogle, logout, refreshMe, endSession }),
+    [status, me, login, loginWithGoogle, logout, refreshMe, endSession],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
