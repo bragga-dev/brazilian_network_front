@@ -6,7 +6,9 @@ import { z } from "zod";
 
 import { AuthShell, FormMessage } from "@/components/layout/AuthShell";
 import { Button } from "@/components/ui/Button";
+import { GoogleAuthSection, OrDivider } from "@/components/auth/GoogleAuthSection";
 import { Field, Input } from "@/components/ui/Field";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useAuth } from "@/hooks/useAuth";
 import { authService } from "@/services/auth.service";
 import { getErrorMessage, getStatus } from "@/utils/errors";
@@ -70,6 +72,9 @@ export default function LoginPage() {
         </>
       }
     >
+      <GoogleAuthSection mode="login" onSuccess={() => navigate(from, { replace: true })} />
+      <OrDivider />
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         {error && <FormMessage tone="error">{error}</FormMessage>}
         {unverified && !resent && (
@@ -83,7 +88,7 @@ export default function LoginPage() {
           <Input type="email" autoComplete="email" {...register("email")} />
         </Field>
         <Field label="Senha" error={errors.password?.message}>
-          <Input type="password" autoComplete="current-password" {...register("password")} />
+          <PasswordInput autoComplete="current-password" {...register("password")} />
         </Field>
 
         <div className="text-right">

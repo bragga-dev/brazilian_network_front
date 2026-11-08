@@ -6,7 +6,8 @@ import { z } from "zod";
 
 import { AuthShell, FormMessage } from "@/components/layout/AuthShell";
 import { Button, buttonClasses } from "@/components/ui/Button";
-import { Field, Input } from "@/components/ui/Field";
+import { Field } from "@/components/ui/Field";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/utils/errors";
 
@@ -66,10 +67,10 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           {error && <FormMessage tone="error">{error}</FormMessage>}
           <Field label="Nova senha" error={errors.new_password?.message}>
-            <Input type="password" autoComplete="new-password" {...register("new_password")} />
+            <PasswordInput autoComplete="new-password" {...register("new_password")} />
           </Field>
           <Field label="Confirmar nova senha" error={errors.new_password2?.message}>
-            <Input type="password" autoComplete="new-password" {...register("new_password2")} />
+            <PasswordInput autoComplete="new-password" {...register("new_password2")} />
           </Field>
           <Button type="submit" loading={isSubmitting} className="w-full">
             Salvar nova senha →

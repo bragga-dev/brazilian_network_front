@@ -13,7 +13,7 @@ interface Props {
 export function AuthShell({ label, title, subtitle, children, footer }: Props) {
   return (
     <div className="relative overflow-hidden">
-      <div className="hero-beams pointer-events-none absolute inset-x-0 top-0 h-96 opacity-60" aria-hidden />
+      <div className="hero-beams pointer-events-none absolute inset-x-0 top-0 h-96 opacity-60 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden />
       <div className="relative mx-auto max-w-md px-4 py-16">
         <Panel className="bg-black/60 p-7 shadow-2xl">
           <SectionLabel>{label}</SectionLabel>

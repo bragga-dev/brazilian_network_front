@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { refreshAccessToken } from "@/lib/api";
 import { AUTH_EXPIRED_EVENT, tokenStore } from "@/lib/tokenStore";
 import { authService } from "@/services/auth.service";
-import type { LoginInput, Me } from "@/types/auth";
+import type { GoogleLoginInput, LoginInput, Me } from "@/types/auth";
 
 import { AuthContext, type AuthContextValue, type AuthStatus } from "./auth-context";
 
@@ -49,6 +49,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [setSession],
   );
 
+  const loginWithGoogle = useCallback(
+    async (input: GoogleLoginInput) => {
+      const result = await authService.loginWithGoogle(input);
+      setSession(await authService.me());
+      return result;
+    },
+    [setSession],
+  );
+
+  const endSession = useCallback(() => {
+    tokenStore.clear();
+    queryClient.clear();
+    setSession(null);
+  }, [queryClient, setSession]);
+
   const logout = useCallback(async () => {
     try {
       await authService.logout();
@@ -58,7 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [queryClient, setSession]);
 
-  const value = useMemo<AuthContextValue>(() => ({ status, me, login, logout }), [status, me, login, logout]);
+  const value = useMemo<AuthContextValue>(
+    () => ({ status, me, login, loginWithGoogle, logout, endSession }),
+    [status, me, login, loginWithGoogle, logout, endSession],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

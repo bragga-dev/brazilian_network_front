@@ -1,4 +1,4 @@
-import { Briefcase, Building2, ChevronDown, FolderKanban, House, LogIn, LogOut, Menu, UserPlus, X, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, FolderKanban, House, LogIn, LogOut, Menu, Settings, UserPlus, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
@@ -65,10 +65,18 @@ function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
             <p className="truncate text-sm font-medium text-white">{displayName(me)}</p>
             <p className="truncate text-xs text-slate-500">{me.user.email}</p>
           </div>
+          <Link
+            to="/conta"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+          >
+            <Settings className="size-4" /> Minha conta
+          </Link>
           <button
             role="menuitem"
             onClick={onLogout}
-            className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
           >
             <LogOut className="size-4" /> Sair
           </button>

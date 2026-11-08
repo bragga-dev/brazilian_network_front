@@ -1,12 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 
 import { AuthShell, FormMessage } from "@/components/layout/AuthShell";
 import { Button } from "@/components/ui/Button";
+import { GoogleAuthSection, OrDivider } from "@/components/auth/GoogleAuthSection";
 import { Field, Input } from "@/components/ui/Field";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { authService } from "@/services/auth.service";
 import { cn } from "@/utils/cn";
 import { getErrorMessage } from "@/utils/errors";
@@ -30,6 +32,7 @@ const ROLES = [
 
 export default function RegisterPage() {
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
 
@@ -51,6 +54,8 @@ export default function RegisterPage() {
     },
   });
   const role = watch("role");
+  const acceptedTerms = watch("accepted_terms");
+  const marketingOptIn = watch("marketing_opt_in");
 
   const onSubmit = async (values: FormValues) => {
     setError(null);
@@ -115,10 +120,10 @@ export default function RegisterPage() {
           <Input type="email" autoComplete="email" {...register("email")} />
         </Field>
         <Field label="Senha" error={errors.password?.message} hint="Mínimo de 8 caracteres.">
-          <Input type="password" autoComplete="new-password" {...register("password")} />
+          <PasswordInput autoComplete="new-password" {...register("password")} />
         </Field>
         <Field label="Confirmar senha" error={errors.password2?.message}>
-          <Input type="password" autoComplete="new-password" {...register("password2")} />
+          <PasswordInput autoComplete="new-password" {...register("password2")} />
         </Field>
 
         <div className="space-y-2 text-sm text-slate-300">
@@ -141,6 +146,15 @@ export default function RegisterPage() {
           Criar conta →
         </Button>
       </form>
+
+      <OrDivider />
+      <GoogleAuthSection
+        mode="register"
+        role={role}
+        acceptedTerms={acceptedTerms}
+        marketingOptIn={marketingOptIn}
+        onSuccess={() => navigate("/", { replace: true })}
+      />
     </AuthShell>
   );
 }
