@@ -39,11 +39,11 @@ export function JobFilters({ filters, onChange, onClear, hasActive }: Props) {
   };
 
   return (
-    <aside className="space-y-4 border border-white/10 bg-white/[0.02] p-5">
+    <aside className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 lg:self-start">
       <div className="flex items-center justify-between">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-flag-green">[ Filtros ]</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-flag-green">Filtros</p>
         {hasActive && (
-          <button onClick={clear} className="font-mono text-[10px] uppercase tracking-wider text-slate-400 hover:text-flag-yellow">
+          <button onClick={clear} className="text-xs text-slate-400 hover:text-flag-yellow">
             Limpar
           </button>
         )}

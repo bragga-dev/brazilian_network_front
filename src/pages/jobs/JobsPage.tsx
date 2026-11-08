@@ -12,9 +12,9 @@ export default function JobsPage() {
   const { data, isLoading, isError, error, refetch, isFetching } = useJobs(filters);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-8 pt-12">
+    <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6">
       <SectionLabel>Vagas</SectionLabel>
-      <h1 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Encontre sua próxima vaga</h1>
+      <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Encontre sua próxima vaga</h1>
       <p className="mt-2 text-slate-400">{data ? `${data.total} ${data.total === 1 ? "vaga encontrada" : "vagas encontradas"}` : " "}</p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[280px_1fr]">

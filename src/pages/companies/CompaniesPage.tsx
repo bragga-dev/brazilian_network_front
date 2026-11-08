@@ -48,11 +48,11 @@ export default function CompaniesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-8 pt-12">
+    <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6">
       <SectionLabel tone="yellow">Empresas</SectionLabel>
-      <h1 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Quem está contratando</h1>
+      <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Quem está contratando</h1>
 
-      <div className="mt-8 grid gap-4 border border-white/10 bg-white/[0.02] p-5 sm:grid-cols-[1fr_160px_auto] sm:items-end">
+      <div className="mt-8 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-[1fr_160px_auto] sm:items-end">
         <Field label="Buscar empresa">
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nome fantasia" />
         </Field>

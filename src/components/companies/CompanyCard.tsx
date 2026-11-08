@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import type { PublicCompanyListItem } from "@/types/company";
 
 export function CompanyCard({ company }: { company: PublicCompanyListItem }) {
@@ -9,12 +10,12 @@ export function CompanyCard({ company }: { company: PublicCompanyListItem }) {
   return (
     <Link
       to={`/empresas/${company.company_id}`}
-      className="group flex flex-col gap-4 border border-white/10 bg-white/[0.02] p-5 transition-colors hover:border-flag-yellow/60 hover:bg-white/[0.04]"
+      className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.05] to-white/[0.015] p-5 transition hover:border-flag-green/50 hover:from-white/[0.07]"
     >
       <div className="flex items-center gap-3">
-        <img src={company.photo_url ?? "/logo.png"} alt="" className="size-12 border border-white/10 bg-black object-cover" />
+        <CompanyLogo name={company.full_name} url={company.photo_url} className="size-12 text-lg" />
         <div className="min-w-0">
-          <p className="truncate font-medium text-white group-hover:text-flag-yellow">{company.full_name}</p>
+          <p className="truncate font-semibold text-white group-hover:text-flag-green">{company.full_name}</p>
           <p className="truncate text-xs text-slate-500">{location || "Local não informado"}</p>
         </div>
       </div>

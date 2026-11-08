@@ -6,7 +6,7 @@ export function Spinner({ label = "Carregando" }: { label?: string }) {
   return (
     <div role="status" className="flex items-center justify-center gap-3 py-16 text-slate-400">
       <span className="size-4 animate-spin rounded-full border-2 border-white/15 border-t-flag-green" />
-      <span className="font-mono text-xs uppercase tracking-widest">{label}...</span>
+      <span className="text-sm">{label}...</span>
     </div>
   );
 }
@@ -28,7 +28,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-5 border border-white/15 px-4 py-2 font-mono text-[11px] uppercase tracking-wider text-white hover:border-flag-green hover:text-flag-green"
+          className="mt-5 rounded-full border border-white/15 px-5 py-2 text-sm text-white hover:border-flag-green hover:text-flag-green"
         >
           Tentar novamente
         </button>

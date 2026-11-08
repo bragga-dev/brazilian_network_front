@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { JobCard } from "@/components/jobs/JobCard";
 import { buttonClasses } from "@/components/ui/Button";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Pagination } from "@/components/ui/Pagination";
 import { Panel, SectionLabel } from "@/components/ui/Panel";
 import { EmptyState, ErrorState, Spinner } from "@/components/ui/States";
@@ -36,15 +37,15 @@ export default function CompanyDetailPage() {
   ].filter((item): item is { href: string; label: string } => Boolean(item.href));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-8 pt-12">
-      <Link to="/empresas" className="font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-flag-yellow">
+    <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6">
+      <Link to="/empresas" className="text-sm text-slate-400 hover:text-white">
         ← Empresas
       </Link>
 
       <Panel className="mt-6 flex flex-col gap-6 p-6 sm:flex-row sm:items-center">
-        <img src={company.photo_url ?? "/logo.png"} alt="" className="size-24 border border-white/10 bg-black object-cover" />
+        <CompanyLogo name={company.full_name} url={company.photo_url} className="size-24 rounded-2xl text-4xl" />
         <div className="min-w-0 flex-1">
-          <h1 className="text-3xl font-semibold text-white">{company.full_name}</h1>
+          <h1 className="text-3xl font-bold text-white">{company.full_name}</h1>
           {location && <p className="mt-1 text-slate-400">{location}</p>}
           {company.bio && <p className="mt-3 max-w-2xl whitespace-pre-line text-slate-300">{company.bio}</p>}
           {links.length > 0 && (

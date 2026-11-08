@@ -100,9 +100,9 @@ export default function RegisterPage() {
               aria-checked={role === option.value}
               onClick={() => setValue("role", option.value)}
               className={cn(
-                "border px-3 py-2.5 font-mono text-[11px] uppercase tracking-wider transition-colors",
+                "rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
                 role === option.value
-                  ? "border-flag-yellow bg-flag-yellow/10 text-flag-yellow"
+                  ? "border-flag-green bg-flag-green/10 text-flag-green"
                   : "border-white/10 text-slate-400 hover:border-white/30",
               )}
             >

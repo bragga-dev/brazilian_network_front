@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { buttonClasses } from "@/components/ui/Button";
 import { Panel, SectionLabel } from "@/components/ui/Panel";
 import { ErrorState, Spinner } from "@/components/ui/States";
@@ -42,8 +43,8 @@ export default function JobDetailPage() {
   const optional = job.technologies.filter((t) => !t.is_required);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-8 pt-12">
-      <Link to="/vagas" className="font-mono text-[11px] uppercase tracking-wider text-slate-400 hover:text-flag-yellow">
+    <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6">
+      <Link to="/vagas" className="text-sm text-slate-400 hover:text-white">
         ← Vagas
       </Link>
 
@@ -51,10 +52,10 @@ export default function JobDetailPage() {
         <article>
           <div className="flex flex-wrap gap-2">
             <Badge tone="green">{job.contract_type_label}</Badge>
-            <Badge tone="blue">{job.work_model_label}</Badge>
+            <Badge tone="purple">{job.work_model_label}</Badge>
             <Badge>{job.experience_level_label}</Badge>
           </div>
-          <h1 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">{job.title}</h1>
+          <h1 className="mt-4 text-3xl font-bold text-white sm:text-4xl">{job.title}</h1>
           <p className="mt-2 text-slate-400">
             {formatLocation(job)} · publicada {formatRelative(job.published_at)}
           </p>
@@ -68,7 +69,7 @@ export default function JobDetailPage() {
               <SectionLabel tone="muted">Stack</SectionLabel>
               <div className="mt-3 flex flex-wrap gap-2">
                 {required.map((t) => (
-                  <Badge key={t.technology.technology_id} tone="yellow">
+                  <Badge key={t.technology.technology_id} tone="blue">
                     {t.technology.name}
                   </Badge>
                 ))}
@@ -98,7 +99,7 @@ export default function JobDetailPage() {
           <Panel className="p-5">
             <SectionLabel tone="blue">Empresa</SectionLabel>
             <Link to={`/empresas/${job.company.company_id}`} className="mt-4 flex items-center gap-3 hover:text-flag-yellow">
-              <img src={job.company.photo_url ?? "/logo.png"} alt="" className="size-12 border border-white/10 bg-black object-cover" />
+              <CompanyLogo name={job.company.full_name} url={job.company.photo_url} className="size-12 text-lg" />
               <span className="font-medium text-white">{job.company.full_name}</span>
             </Link>
           </Panel>
