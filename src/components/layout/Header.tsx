@@ -76,12 +76,12 @@ function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
             </Link>
           )}
           <Link
-            to="/conta"
+            to={me.user.role === "admin" ? "/conta" : "/perfil?aba=conta"}
             role="menuitem"
             onClick={() => setOpen(false)}
             className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
           >
-            <Settings className="size-4" /> Minha conta
+            <Settings className="size-4" /> Conta e segurança
           </Link>
           <button
             role="menuitem"

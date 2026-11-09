@@ -1,6 +1,7 @@
-import { Award, Briefcase, Cpu, ExternalLink, GraduationCap, MapPin, User } from "lucide-react";
+import { Award, Briefcase, Cpu, ExternalLink, GraduationCap, MapPin, ShieldCheck, User } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 
+import { AccountSettings } from "@/components/account/AccountSettings";
 import { AddressesPanel } from "@/components/profile/AddressesPanel";
 import { CompanyDataForm } from "@/components/profile/CompanyDataForm";
 import { buildCompleteness, CompletenessCard } from "@/components/profile/CompletenessCard";
@@ -38,6 +39,7 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
   const tabs: TabItem[] = [
     { id: "dados", label: "Dados", icon: User },
     { id: "enderecos", label: "Endereços", icon: MapPin },
+    { id: "conta", label: "Conta e segurança", icon: ShieldCheck },
   ];
 
   return (
@@ -75,6 +77,7 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
           </div>
         )}
         {tab === "enderecos" && <AddressesPanel owner="company" />}
+        {tab === "conta" && <AccountSettings />}
       </div>
     </>
   );
@@ -112,6 +115,7 @@ function DevProfileView({ email }: { email: string }) {
     { id: "experiencia", label: "Experiência", icon: Briefcase, count: experiences.length },
     { id: "formacao", label: "Formação", icon: GraduationCap, count: educations.length },
     { id: "cursos", label: "Cursos", icon: Award, count: courses.length },
+    { id: "conta", label: "Conta e segurança", icon: ShieldCheck },
   ];
 
   return (
@@ -155,6 +159,7 @@ function DevProfileView({ email }: { email: string }) {
         {tab === "experiencia" && <ExperiencePanel items={experiences} />}
         {tab === "formacao" && <EducationPanel items={educations} />}
         {tab === "cursos" && <CoursesPanel items={courses} />}
+        {tab === "conta" && <AccountSettings />}
       </div>
     </>
   );

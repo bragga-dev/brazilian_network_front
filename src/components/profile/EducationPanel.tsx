@@ -114,7 +114,8 @@ export function EducationPanel({ items }: { items: Education[] }) {
   const remove = useProfileMutation(profileService.educations.remove);
 
   return (
-    <SectionPanel
+    <>
+      <SectionPanel
       title="Formação acadêmica"
       hint="Escolaridade e cursos de graduação, técnico, pós e afins."
       addLabel="Adicionar formação"
@@ -135,6 +136,7 @@ export function EducationPanel({ items }: { items: Education[] }) {
           }
         />
       ))}
+      </SectionPanel>
       <Modal open={editing !== null} onClose={() => setEditing(null)} title={editing && editing !== "new" ? "Editar formação" : "Nova formação"} wide>
         {editing !== null && <EducationForm item={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
       </Modal>
@@ -146,6 +148,6 @@ export function EducationPanel({ items }: { items: Education[] }) {
         onConfirm={() => deleting && remove.mutate(deleting.education_id, { onSuccess: () => setDeleting(null) })}
         onClose={() => setDeleting(null)}
       />
-    </SectionPanel>
+    </>
   );
 }

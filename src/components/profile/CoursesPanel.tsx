@@ -139,7 +139,8 @@ export function CoursesPanel({ items }: { items: Course[] }) {
   const remove = useProfileMutation(profileService.courses.remove);
 
   return (
-    <SectionPanel
+    <>
+      <SectionPanel
       title="Cursos complementares"
       hint="Bootcamps, certificações, workshops e capacitações."
       addLabel="Adicionar curso"
@@ -160,6 +161,7 @@ export function CoursesPanel({ items }: { items: Course[] }) {
           }
         />
       ))}
+      </SectionPanel>
       <Modal open={editing !== null} onClose={() => setEditing(null)} title={editing && editing !== "new" ? "Editar curso" : "Novo curso"} wide>
         {editing !== null && <CourseForm item={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
       </Modal>
@@ -171,6 +173,6 @@ export function CoursesPanel({ items }: { items: Course[] }) {
         onConfirm={() => deleting && remove.mutate(deleting.course_id, { onSuccess: () => setDeleting(null) })}
         onClose={() => setDeleting(null)}
       />
-    </SectionPanel>
+    </>
   );
 }

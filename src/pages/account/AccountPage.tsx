@@ -1,24 +1,13 @@
-import type { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 
-import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
-import { DeleteAccountPanel } from "@/components/account/DeleteAccountPanel";
-import { PrivacyPanel } from "@/components/account/PrivacyPanel";
-import { SessionsList } from "@/components/account/SessionsList";
-import { Panel, SectionLabel } from "@/components/ui/Panel";
+import { AccountSettings } from "@/components/account/AccountSettings";
+import { SectionLabel } from "@/components/ui/Panel";
 import { useAuth } from "@/hooks/useAuth";
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <Panel className="p-6">
-      <h2 className="text-lg font-semibold text-white">{title}</h2>
-      <div className="mt-5">{children}</div>
-    </Panel>
-  );
-}
-
+/** Dev e empresa têm essa área como aba do perfil; esta página existe só para o admin (que não tem perfil). */
 export default function AccountPage() {
   const { me } = useAuth();
-  const isAdmin = me?.user.role === "admin";
+  if (me && me.user.role !== "admin") return <Navigate to="/perfil?aba=conta" replace />;
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-8 pt-12 sm:px-6">
@@ -27,28 +16,8 @@ export default function AccountPage() {
       <p className="mt-2 text-slate-400">
         {me?.user.email} · {me?.user.role_label}
       </p>
-
-      <div className="mt-8 grid items-start gap-5 lg:grid-cols-2">
-        <div className="space-y-5">
-          <Section title="Alterar senha">
-            <ChangePasswordForm />
-          </Section>
-          {!isAdmin && (
-            <Section title="Zona de perigo">
-              <DeleteAccountPanel />
-            </Section>
-          )}
-        </div>
-        <div className="space-y-5">
-          <Section title="Sessões ativas">
-            <SessionsList />
-          </Section>
-          {!isAdmin && (
-            <Section title="Privacidade e dados">
-              <PrivacyPanel />
-            </Section>
-          )}
-        </div>
+      <div className="mt-8">
+        <AccountSettings />
       </div>
     </div>
   );
