@@ -2,6 +2,9 @@ import { ArrowRight, Briefcase } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
+import { Icon } from "@/components/ui/Icon";
+import { TechBadge } from "@/components/ui/TechBadge";
+import { CONTRACT_ICONS, WORK_MODEL_ICONS } from "@/constants/icons";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Panel } from "@/components/ui/Panel";
 import type { Job } from "@/types/job";
@@ -18,16 +21,14 @@ function JobRow({ job }: { job: Job }) {
           <p className="truncate text-sm text-slate-400">{job.company.full_name}</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {job.technologies.slice(0, 3).map((item) => (
-              <Badge key={item.technology.technology_id} tone="blue">
-                {item.technology.name}
-              </Badge>
+              <TechBadge key={item.technology.technology_id} technology={item.technology} />
             ))}
-            <Badge tone="neutral">{job.work_model_label}</Badge>
+            <Badge tone="neutral" icon={<Icon icon={WORK_MODEL_ICONS[job.work_model]} size="xs" />}>{job.work_model_label}</Badge>
           </div>
           <p className="mt-2 text-xs font-semibold text-white xl:hidden">{salary === "A combinar" ? "" : salary}</p>
         </div>
         <div className="hidden shrink-0 flex-col items-end gap-2 text-right xl:flex">
-          <Badge tone="green">{job.contract_type_label}</Badge>
+          <Badge tone="green" icon={<Icon icon={CONTRACT_ICONS[job.contract_type]} size="xs" />}>{job.contract_type_label}</Badge>
           <span className={salary === "A combinar" ? "text-xs text-slate-500" : "text-xs font-semibold text-white"}>{salary}</span>
         </div>
       </Link>

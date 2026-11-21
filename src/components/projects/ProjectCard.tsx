@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { Icon } from "@/components/ui/Icon";
+import { TechBadge } from "@/components/ui/TechBadge";
+import { EXPERIENCE_ICONS } from "@/constants/icons";
 import type { Project } from "@/types/project";
 import { formatProjectValue, formatRelative } from "@/utils/format";
 
@@ -25,11 +28,11 @@ export function ProjectCard({ project }: { project: Project }) {
       <p className="mt-3 line-clamp-2 text-sm text-slate-400">{project.description}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <Badge tone="purple">{project.experience_level_label}</Badge>
+        <Badge tone="purple" icon={<Icon icon={EXPERIENCE_ICONS[project.experience_level]} size="xs" />}>
+          {project.experience_level_label}
+        </Badge>
         {project.technologies.slice(0, 5).map((item) => (
-          <Badge key={item.technology.technology_id} tone="blue">
-            {item.technology.name}
-          </Badge>
+          <TechBadge key={item.technology.technology_id} technology={item.technology} />
         ))}
       </div>
 

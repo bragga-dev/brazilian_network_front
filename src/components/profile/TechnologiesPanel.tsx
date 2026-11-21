@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FormMessage } from "@/components/layout/AuthShell";
 import { Input, Select } from "@/components/ui/Field";
 import { Panel } from "@/components/ui/Panel";
+import { TechIcon } from "@/components/ui/TechIcon";
 import { PROFICIENCY_OPTIONS } from "@/constants/profileOptions";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useProfileMutation, useTechnologyCatalog, useTechnologyCategories } from "@/hooks/useProfile";
@@ -25,9 +26,14 @@ function TechRow({ item }: { item: DevTechnology }) {
 
   return (
     <li className={`flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 ${item.is_active ? "" : "opacity-50"}`}>
-      <div className="min-w-32 flex-1">
-        <p className="font-medium text-white">{item.technology.name}</p>
-        <p className="truncate text-xs text-slate-500">{item.technology.categories.map((c) => c.name).join(" · ")}</p>
+      <div className="flex min-w-32 flex-1 items-center gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04]">
+          <TechIcon name={item.technology.name} categories={item.technology.categories.map((c) => c.name)} className="size-5" />
+        </span>
+        <div className="min-w-0">
+          <p className="font-medium text-white">{item.technology.name}</p>
+          <p className="truncate text-xs text-slate-500">{item.technology.categories.map((c) => c.name).join(" · ")}</p>
+        </div>
       </div>
       <Select
         aria-label={`Nível em ${item.technology.name}`}

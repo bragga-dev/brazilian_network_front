@@ -8,6 +8,8 @@ import { buttonClasses } from "@/components/ui/Button";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Panel } from "@/components/ui/Panel";
 import { ErrorState, Spinner } from "@/components/ui/States";
+import { TechBadge } from "@/components/ui/TechBadge";
+import { TechIcon } from "@/components/ui/TechIcon";
 import { PROFICIENCY_RANK } from "@/constants/profileOptions";
 import { usePublicProfile } from "@/hooks/useProfile";
 import type { DevTechnology } from "@/types/profile";
@@ -40,7 +42,10 @@ function SkillBar({ item }: { item: DevTechnology }) {
   return (
     <li className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-medium text-white">{item.technology.name}</span>
+        <span className="flex items-center gap-2 font-medium text-white">
+          <TechIcon name={item.technology.name} categories={item.technology.categories.map((c) => c.name)} className="size-4" />
+          {item.technology.name}
+        </span>
         <span className="text-xs text-slate-500">
           {item.years_experience > 0 ? `${item.years_experience} ${item.years_experience === 1 ? "ano" : "anos"}` : "< 1 ano"}
         </span>
@@ -106,7 +111,7 @@ export default function DevProfilePage() {
             {topTechs.length > 0 && (
               <div className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start">
                 {topTechs.map((item) => (
-                  <Badge key={item.dev_technology_id} tone="blue">{item.technology.name}</Badge>
+                  <TechBadge key={item.dev_technology_id} technology={item.technology} />
                 ))}
                 {technologies.length > topTechs.length && <Badge>+{technologies.length - topTechs.length}</Badge>}
               </div>

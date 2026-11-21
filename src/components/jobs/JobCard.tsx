@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { Icon } from "@/components/ui/Icon";
+import { TechBadge } from "@/components/ui/TechBadge";
+import { CONTRACT_ICONS, EXPERIENCE_ICONS, WORK_MODEL_ICONS } from "@/constants/icons";
 import { formatLocation, formatRelative, formatSalary } from "@/utils/format";
 import type { Job } from "@/types/job";
 
@@ -27,13 +30,15 @@ export function JobCard({ job }: { job: Job }) {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <Badge tone="green">{job.contract_type_label}</Badge>
-        <Badge tone="purple">{job.work_model_label}</Badge>
-        <Badge>{job.experience_level_label}</Badge>
+        <Badge tone="green" icon={<Icon icon={CONTRACT_ICONS[job.contract_type]} size="xs" />}>
+          {job.contract_type_label}
+        </Badge>
+        <Badge tone="purple" icon={<Icon icon={WORK_MODEL_ICONS[job.work_model]} size="xs" />}>
+          {job.work_model_label}
+        </Badge>
+        <Badge icon={<Icon icon={EXPERIENCE_ICONS[job.experience_level]} size="xs" />}>{job.experience_level_label}</Badge>
         {job.technologies.slice(0, 4).map((item) => (
-          <Badge key={item.technology.technology_id} tone="blue">
-            {item.technology.name}
-          </Badge>
+          <TechBadge key={item.technology.technology_id} technology={item.technology} />
         ))}
       </div>
 

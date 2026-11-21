@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { JobCard } from "@/components/jobs/JobCard";
 import { Badge } from "@/components/ui/Badge";
+import { TechIcon } from "@/components/ui/TechIcon";
 import { buttonClasses } from "@/components/ui/Button";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Pagination } from "@/components/ui/Pagination";
@@ -134,7 +135,7 @@ export default function CompanyDetailPage() {
               <Card title="Tecnologias">
                 <div className="flex flex-wrap gap-2">
                   {technologies.map((name) => (
-                    <Badge key={name} tone="blue">{name}</Badge>
+                    <Badge key={name} tone="blue" icon={<TechIcon name={name} />}>{name}</Badge>
                   ))}
                 </div>
               </Card>

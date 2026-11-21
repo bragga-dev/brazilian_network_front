@@ -12,9 +12,17 @@ const TONES: Record<Tone, string> = {
   purple: "border-brand-purple/45 bg-brand-purple/10 text-purple-300",
 };
 
-export function Badge({ tone = "neutral", children }: { tone?: Tone; children: ReactNode }) {
+interface BadgeProps {
+  tone?: Tone;
+  /** Ícone à esquerda do texto (use <Icon size="xs" /> ou <TechIcon />). */
+  icon?: ReactNode;
+  children: ReactNode;
+}
+
+export function Badge({ tone = "neutral", icon, children }: BadgeProps) {
   return (
-    <span className={cn("inline-flex items-center whitespace-nowrap rounded-md border px-2 py-0.5 text-[11px] font-medium", TONES[tone])}>
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2 py-0.5 text-[11px] font-medium", TONES[tone])}>
+      {icon}
       {children}
     </span>
   );

@@ -1,10 +1,13 @@
 import { Link, useParams } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { buttonClasses } from "@/components/ui/Button";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { Icon } from "@/components/ui/Icon";
 import { Panel, SectionLabel } from "@/components/ui/Panel";
 import { ErrorState, Spinner } from "@/components/ui/States";
+import { TechBadge } from "@/components/ui/TechBadge";
+import { CONTRACT_ICONS, EXPERIENCE_ICONS, WORK_MODEL_ICONS } from "@/constants/icons";
 import { useJob } from "@/hooks/useJobs";
 import { getErrorMessage, getStatus } from "@/utils/errors";
 import { formatDate, formatLocation, formatRelative, formatSalary } from "@/utils/format";
@@ -51,9 +54,13 @@ export default function JobDetailPage() {
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_320px]">
         <article>
           <div className="flex flex-wrap gap-2">
-            <Badge tone="green">{job.contract_type_label}</Badge>
-            <Badge tone="purple">{job.work_model_label}</Badge>
-            <Badge>{job.experience_level_label}</Badge>
+            <Badge tone="green" icon={<Icon icon={CONTRACT_ICONS[job.contract_type]} size="xs" />}>
+              {job.contract_type_label}
+            </Badge>
+            <Badge tone="purple" icon={<Icon icon={WORK_MODEL_ICONS[job.work_model]} size="xs" />}>
+              {job.work_model_label}
+            </Badge>
+            <Badge icon={<Icon icon={EXPERIENCE_ICONS[job.experience_level]} size="xs" />}>{job.experience_level_label}</Badge>
           </div>
           <h1 className="mt-4 text-3xl font-bold text-white sm:text-4xl">{job.title}</h1>
           <p className="mt-2 text-slate-400">
@@ -69,12 +76,10 @@ export default function JobDetailPage() {
               <SectionLabel tone="muted">Stack</SectionLabel>
               <div className="mt-3 flex flex-wrap gap-2">
                 {required.map((t) => (
-                  <Badge key={t.technology.technology_id} tone="blue">
-                    {t.technology.name}
-                  </Badge>
+                  <TechBadge key={t.technology.technology_id} technology={t.technology} />
                 ))}
                 {optional.map((t) => (
-                  <Badge key={t.technology.technology_id}>{t.technology.name} · desejável</Badge>
+                  <TechBadge key={t.technology.technology_id} technology={t.technology} suffix=" · desejável" tone="neutral" />
                 ))}
               </div>
             </section>
