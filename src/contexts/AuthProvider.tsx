@@ -5,8 +5,37 @@ import { refreshAccessToken } from "@/lib/api";
 import { AUTH_EXPIRED_EVENT, tokenStore } from "@/lib/tokenStore";
 import { authService } from "@/services/auth.service";
 import type { GoogleLoginInput, LoginInput, Me } from "@/types/auth";
+import { getStatus } from "@/utils/errors";
 
 import { AuthContext, type AuthContextValue, type AuthStatus } from "./auth-context";
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Restaura a sessão pelo cookie de refresh. O refresh é compartilhado (single-flight), então o
+ * double-mount do StrictMode não rotaciona o token duas vezes.
+ * Só 401/403/404 em /auth/me significam "sem sessão". Falha passageira (429, 5xx, rede) tenta de novo
+ * antes de desistir, para um limite de requisições não deslogar quem tem cookie válido.
+ */
+async function restoreSession(isActive: () => boolean): Promise<Me | null> {
+  try {
+    await refreshAccessToken();
+  } catch {
+    return null;
+  }
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await authService.me();
+    } catch (error) {
+      const status = getStatus(error);
+      if (status === 401 || status === 403 || status === 404) return null;
+      if (attempt === 2 || !isActive()) return null;
+      await wait(status === 429 ? 2000 * (attempt + 1) : 800 * (attempt + 1));
+    }
+  }
+  return null;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
@@ -18,14 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus(value ? "authenticated" : "anonymous");
   }, []);
 
-  // Restaura a sessão pelo cookie de refresh. O refresh é compartilhado (single-flight),
-  // então o double-mount do StrictMode não rotaciona o token duas vezes.
   useEffect(() => {
     let active = true;
-    refreshAccessToken()
-      .then(() => authService.me())
-      .then((value) => active && setSession(value))
-      .catch(() => active && setSession(null));
+    void restoreSession(() => active).then((value) => active && setSession(value));
     return () => {
       active = false;
     };
@@ -68,10 +92,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
   }, [queryClient, setSession]);
 
+  /** Nunca rejeita: se o servidor não responder, a sessão local termina do mesmo jeito. */
   const logout = useCallback(async () => {
     try {
       await authService.logout();
+    } catch {
+      // o cookie de refresh expira sozinho; o importante é encerrar aqui
     } finally {
+      tokenStore.clear();
       queryClient.clear();
       setSession(null);
     }

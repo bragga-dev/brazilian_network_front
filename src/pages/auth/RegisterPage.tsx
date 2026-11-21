@@ -7,17 +7,19 @@ import { z } from "zod";
 import { AuthShell, FormMessage } from "@/components/layout/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { GoogleAuthSection, OrDivider } from "@/components/auth/GoogleAuthSection";
+import { ResendVerification } from "@/components/auth/ResendVerification";
 import { Field, Input } from "@/components/ui/Field";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { authService } from "@/services/auth.service";
 import { cn } from "@/utils/cn";
 import { getErrorMessage } from "@/utils/errors";
+import { passwordSchema } from "@/utils/password";
 
 const schema = z
   .object({
     role: z.enum(["dev", "company"]),
     email: z.email("E-mail inválido"),
-    password: z.string().min(8, "Mínimo de 8 caracteres"),
+    password: passwordSchema,
     password2: z.string().min(1, "Confirme a senha"),
     accepted_terms: z.boolean().refine((value) => value, "Aceite os termos para continuar"),
     marketing_opt_in: z.boolean(),
@@ -73,6 +75,9 @@ export default function RegisterPage() {
         <FormMessage tone="success">
           Enviamos um link de confirmação para <strong>{sentTo}</strong>. Confirme o e-mail para poder entrar.
         </FormMessage>
+        <div className="mt-5">
+          <ResendVerification email={sentTo} />
+        </div>
         <Link to="/entrar" className="mt-5 inline-block text-sm text-flag-yellow hover:underline">
           Ir para o login →
         </Link>

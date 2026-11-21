@@ -46,11 +46,19 @@ export interface CompanyProfile {
   website: string | null;
 }
 
+/** Regra do backend para o dev se candidatar (só vem para devs). Os rótulos são os mesmos do 403 de candidatura. */
+export interface ProfileCompletion {
+  complete: boolean;
+  required: string[];
+  missing: string[];
+}
+
 export interface Me {
   user: User;
   dev: DevProfile | null;
   company: CompanyProfile | null;
   admin: { full_name?: string | null } | null;
+  profile_completion: ProfileCompletion | null;
 }
 
 export interface LoginInput {

@@ -10,10 +10,11 @@ import { Field } from "@/components/ui/Field";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/utils/errors";
+import { passwordSchema } from "@/utils/password";
 
 const schema = z
   .object({
-    new_password: z.string().min(8, "Mínimo de 8 caracteres"),
+    new_password: passwordSchema,
     new_password2: z.string().min(1, "Confirme a senha"),
   })
   .refine((data) => data.new_password === data.new_password2, { path: ["new_password2"], message: "As senhas não coincidem" });

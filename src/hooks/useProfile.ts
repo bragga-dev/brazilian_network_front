@@ -51,7 +51,11 @@ export function useAddresses(owner: AddressOwner) {
 
 export function useAddressMutations(owner: AddressOwner) {
   const queryClient = useQueryClient();
-  const onSuccess = () => queryClient.invalidateQueries({ queryKey: profileKeys.addresses(owner) });
+  const { refreshMe } = useAuth();
+  // Ter (ou não) um endereço entra na completude do perfil: recarrega /auth/me junto.
+  const onSuccess = async () => {
+    await Promise.all([queryClient.invalidateQueries({ queryKey: profileKeys.addresses(owner) }), refreshMe()]);
+  };
   return {
     create: useMutation({ mutationFn: (input: AddressInput) => accountService.createAddress(owner, input), onSuccess }),
     update: useMutation({

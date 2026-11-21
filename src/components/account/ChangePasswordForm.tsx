@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -6,21 +7,24 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { accountKeys } from "@/hooks/useAccount";
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/utils/errors";
+import { passwordSchema } from "@/utils/password";
 
 import { FormMessage } from "../layout/AuthShell";
 
 const schema = z
   .object({
     old_password: z.string().min(1, "Informe a senha atual"),
-    new_password: z.string().min(8, "Mínimo de 8 caracteres"),
+    new_password: passwordSchema,
     new_password2: z.string().min(1, "Confirme a nova senha"),
   })
   .refine((data) => data.new_password === data.new_password2, { path: ["new_password2"], message: "As senhas não coincidem" });
 type FormValues = z.infer<typeof schema>;
 
 export function ChangePasswordForm() {
+  const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const {
@@ -37,6 +41,7 @@ export function ChangePasswordForm() {
       await authService.changePassword(values);
       setDone(true);
       reset();
+      void queryClient.invalidateQueries({ queryKey: accountKeys.sessions });
     } catch (err) {
       setError(getErrorMessage(err, "Não foi possível alterar a senha."));
     }

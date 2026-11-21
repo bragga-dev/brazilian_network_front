@@ -27,10 +27,9 @@ export const authService = {
     return { created: status === 201 };
   },
 
-  /** Cadastra e dispara o e-mail de verificação. Não mantém sessão: o login exige e-mail verificado. */
+  /** Cadastra e dispara o e-mail de verificação. O backend não emite token nem cookie: o login exige e-mail verificado. */
   async register(input: RegisterInput): Promise<void> {
-    await api.post<AccessToken>("/auth/register", input);
-    tokenStore.clear();
+    await api.post<MessageOut>("/auth/register", input);
   },
 
   async logout(): Promise<void> {

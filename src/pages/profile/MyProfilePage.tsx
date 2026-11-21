@@ -19,8 +19,9 @@ import { Tabs, type TabItem } from "@/components/ui/Tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useIdentityMutation, useMyProfile } from "@/hooks/useProfile";
 import { accountService } from "@/services/account.service";
-import type { CompanyProfile } from "@/types/auth";
+import type { CompanyProfile, ProfileCompletion } from "@/types/auth";
 import { getErrorMessage } from "@/utils/errors";
+import { COMPANY_REQUIRED, companyMissingFields } from "@/utils/profileCompletion";
 
 function CompanyProfileView({ company, email }: { company: CompanyProfile; email: string }) {
   const [params, setParams] = useSearchParams();
@@ -28,10 +29,9 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
   const upload = useIdentityMutation(accountService.uploadCompanyPhoto);
   const remove = useIdentityMutation(async (_: void) => accountService.deleteCompanyPhoto());
 
+  const missing = companyMissingFields(company);
   const completeness = buildCompleteness([
-    { label: "Nome fantasia", done: Boolean(company.full_name) },
-    { label: "Razão social e CNPJ", done: Boolean(company.legal_name && company.cnpj) },
-    { label: "Sobre a empresa", done: company.bio.trim().length > 30 },
+    ...COMPANY_REQUIRED.map((label) => ({ label, done: !missing.includes(label), required: true })),
     { label: "WhatsApp de contato", done: Boolean(company.whatsapp) },
     { label: "Site ou redes sociais", done: Boolean(company.website || company.linkedin_url || company.github_url) },
   ]);
@@ -72,7 +72,7 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
           <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <CompanyDataForm company={company} />
             <div className="space-y-5 lg:self-start">
-              <CompletenessCard completeness={completeness} />
+              <CompletenessCard completeness={completeness} requiredTitle="Dados essenciais" />
             </div>
           </div>
         )}
@@ -83,7 +83,7 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
   );
 }
 
-function DevProfileView({ email }: { email: string }) {
+function DevProfileView({ email, requirements }: { email: string; requirements: ProfileCompletion | null }) {
   const [params, setParams] = useSearchParams();
   const tab = params.get("aba") ?? "dados";
   const { data, isLoading, isError, error, refetch } = useMyProfile();
@@ -96,12 +96,12 @@ function DevProfileView({ email }: { email: string }) {
   const { dev, technologies, educations, experiences, courses } = data;
   const fullName = [dev.first_name, dev.last_name].filter(Boolean).join(" ") || email;
 
+  // Obrigatórios vêm do backend (mesma regra do 403 de candidatura); o resto é recomendação.
+  const pending = new Set(requirements?.missing ?? []);
   const completeness = buildCompleteness([
-    { label: "Título profissional", done: Boolean(dev.headline) },
-    { label: "Sobre mim", done: dev.bio.trim().length > 30 },
+    ...(requirements?.required ?? []).map((label) => ({ label, done: !pending.has(label), required: true })),
     { label: "WhatsApp", done: Boolean(dev.whatsapp) },
     { label: "GitHub ou LinkedIn", done: Boolean(dev.github_url || dev.linkedin_url) },
-    { label: "Currículo anexado", done: Boolean(dev.curriculum_url) },
     { label: "Tecnologias", done: technologies.length > 0 },
     { label: "Experiência profissional", done: experiences.length > 0 },
     { label: "Formação acadêmica", done: educations.length > 0 },
@@ -149,7 +149,7 @@ function DevProfileView({ email }: { email: string }) {
           <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <DevDataForm dev={dev} />
             <div className="space-y-5 lg:self-start">
-              <CompletenessCard completeness={completeness} />
+              <CompletenessCard completeness={completeness} requiredTitle="Obrigatório para se candidatar" />
               <CurriculumCard url={dev.curriculum_url} />
             </div>
           </div>
@@ -171,7 +171,11 @@ export default function MyProfilePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6">
-      {me.company ? <CompanyProfileView company={me.company} email={me.user.email} /> : <DevProfileView email={me.user.email} />}
+      {me.company ? (
+        <CompanyProfileView company={me.company} email={me.user.email} />
+      ) : (
+        <DevProfileView email={me.user.email} requirements={me.profile_completion} />
+      )}
     </div>
   );
 }
