@@ -21,6 +21,7 @@ export const router = createBrowserRouter([
       { path: "vagas", lazy: page(() => import("@/pages/jobs/JobsPage")) },
       { path: "vagas/:jobId", lazy: page(() => import("@/pages/jobs/JobDetailPage")) },
       { path: "projetos", lazy: page(() => import("@/pages/projects/ProjectsPage")) },
+      { path: "projetos/:projectId", lazy: page(() => import("@/pages/projects/ProjectDetailPage")) },
       { path: "devs/:devId", lazy: page(() => import("@/pages/devs/DevProfilePage")) },
       { path: "empresas", lazy: page(() => import("@/pages/companies/CompaniesPage")) },
       { path: "empresas/:companyId", lazy: page(() => import("@/pages/companies/CompanyDetailPage")) },
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute roles={["dev", "company"]} />,
         children: [{ path: "perfil", lazy: page(() => import("@/pages/profile/MyProfilePage")) }],
+      },
+      {
+        element: <ProtectedRoute roles={["dev"]} />,
+        children: [{ path: "candidaturas", lazy: page(() => import("@/pages/applications/MyApplicationsPage")) }],
       },
       // Destinos dos links enviados por e-mail (acessíveis logado ou não)
       { path: "verificacao-concluida", lazy: page(() => import("@/pages/auth/VerificationResultPage")) },

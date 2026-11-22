@@ -1,4 +1,4 @@
-import { Briefcase, Building2, ChevronDown, FolderKanban, House, LogIn, LogOut, Menu, Settings, UserPlus, UserRound, X, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LogIn, LogOut, Menu, Settings, UserPlus, UserRound, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
@@ -73,6 +73,16 @@ function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
               className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
             >
               <UserRound className="size-4" /> Meu perfil
+            </Link>
+          )}
+          {me.user.role === "dev" && (
+            <Link
+              to="/candidaturas"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+            >
+              <ClipboardList className="size-4" /> Minhas candidaturas
             </Link>
           )}
           <Link

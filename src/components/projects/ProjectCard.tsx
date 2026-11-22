@@ -14,12 +14,14 @@ export function ProjectCard({ project }: { project: Project }) {
   const value = formatProjectValue(project);
 
   return (
-    <article className="rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.05] to-white/[0.015] p-5">
+    <article className="group relative rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.05] to-white/[0.015] p-5 transition hover:border-flag-green/50 hover:from-white/[0.07]">
       <div className="flex items-start gap-4">
         <CompanyLogo name={project.company.full_name} url={project.company.photo_url} className="size-12 text-lg" />
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-lg font-semibold text-white">{project.title}</h3>
-          <Link to={`/empresas/${project.company.company_id}`} className="mt-0.5 inline-block text-sm text-slate-400 hover:text-flag-green">
+          <Link to={`/projetos/${project.project_id}`} className="block truncate text-lg font-semibold text-white after:absolute after:inset-0 group-hover:text-flag-green">
+            {project.title}
+          </Link>
+          <Link to={`/empresas/${project.company.company_id}`} className="relative z-10 mt-0.5 inline-block text-sm text-slate-400 hover:text-flag-green">
             {project.company.full_name}
           </Link>
         </div>

@@ -2,6 +2,7 @@ import type { Job } from "@/types/job";
 import type { Project } from "@/types/project";
 
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+const currencyExact = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 const PERIOD_SUFFIX: Record<Job["pay_period"], string> = {
   monthly: "/mês",
@@ -65,6 +66,11 @@ export function formatProjectValue(project: Pick<Project, "min_value" | "max_val
   }
   if (max !== null) return `Até ${currency.format(max)}`;
   return `A partir de ${currency.format(min as number)}`;
+}
+
+/** Valor exato (centavos) de uma proposta; a API manda Decimal como string. */
+export function formatMoney(value: string): string {
+  return currencyExact.format(Number(value));
 }
 
 export function formatNumber(value: number): string {
