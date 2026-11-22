@@ -8,3 +8,8 @@ export interface Technology {
   name: string;
   categories: TechnologyCategory[];
 }
+
+export interface WorkArea {
+  work_area_id: string;
+  name: string;
+}

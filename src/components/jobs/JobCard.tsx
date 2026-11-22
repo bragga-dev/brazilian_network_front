@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/Badge";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Icon } from "@/components/ui/Icon";
+import { LockedNotice } from "@/components/ui/LockedNotice";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { CONTRACT_ICONS, EXPERIENCE_ICONS, WORK_MODEL_ICONS } from "@/constants/icons";
 import { formatLocation, formatRelative, formatSalary } from "@/utils/format";
@@ -44,7 +45,11 @@ export function JobCard({ job }: { job: Job }) {
 
       <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-sm">
         <span className="text-slate-400">{formatLocation(job)}</span>
-        <span className={salary === "A combinar" ? "text-slate-500" : "font-semibold text-white"}>{salary}</span>
+        {job.locked ? (
+          <LockedNotice compact>Entre para ver a remuneração</LockedNotice>
+        ) : (
+          <span className={salary === "A combinar" ? "text-slate-500" : "font-semibold text-white"}>{salary}</span>
+        )}
       </div>
     </article>
   );

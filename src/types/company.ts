@@ -8,7 +8,10 @@ export interface PublicCompany {
   bio: string;
   github_url: string | null;
   linkedin_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
   website: string | null;
+  is_patriot: boolean;
   city: string | null;
   state: string | null;
 }

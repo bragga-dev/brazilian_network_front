@@ -100,6 +100,8 @@ export interface PublicDev {
   bio: string;
   github_url: string | null;
   linkedin_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
   site_url: string | null;
   is_patriot: boolean;
   accepts_patriot_discount: boolean;
@@ -147,6 +149,8 @@ export interface DevUpdateInput {
   bio?: string;
   github_url?: string;
   linkedin_url?: string;
+  instagram_url?: string;
+  facebook_url?: string;
   site_url?: string;
   accepts_patriot_discount?: boolean;
 }
@@ -159,6 +163,8 @@ export interface CompanyUpdateInput {
   bio?: string;
   github_url?: string;
   linkedin_url?: string;
+  instagram_url?: string;
+  facebook_url?: string;
   website?: string;
 }
 

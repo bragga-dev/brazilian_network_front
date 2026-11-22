@@ -1,4 +1,5 @@
 import { MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { Panel } from "@/components/ui/Panel";
 import { REGION_COLORS } from "@/constants/regions";
@@ -7,7 +8,6 @@ import type { RegionShare } from "@/hooks/useHomeData";
 interface Props {
   regions: RegionShare[];
   companyCount: number;
-  sampled: boolean;
   loading: boolean;
 }
 
@@ -23,7 +23,7 @@ function donutGradient(regions: RegionShare[]): string {
   return stops.length ? `conic-gradient(${stops.join(", ")})` : "conic-gradient(rgba(255,255,255,0.08) 0 100%)";
 }
 
-export function RegionsPanel({ regions, companyCount, sampled, loading }: Props) {
+export function RegionsPanel({ regions, companyCount, loading }: Props) {
   return (
     <Panel className="flex flex-col p-6">
       <h2 className="flex items-center gap-3 text-lg font-semibold text-white">
@@ -43,17 +43,23 @@ export function RegionsPanel({ regions, companyCount, sampled, loading }: Props)
             </div>
           </div>
           <ul className="w-full space-y-3.5">
-            {regions.map(({ region, percent }) => (
+            {regions.map(({ region, label, percent, companies_count }) => (
               <li key={region} className="flex items-center gap-3 text-sm">
                 <span className="size-2.5 rounded-full" style={{ background: REGION_COLORS[region], boxShadow: `0 0 8px ${REGION_COLORS[region]}` }} />
-                <span className="flex-1 text-slate-300">{region}</span>
-                <span className="font-semibold text-white">{percent.toLocaleString("pt-BR", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}%</span>
+                <span className="flex-1 text-slate-300">{label}</span>
+                <span className="text-xs text-slate-500">{companies_count}</span>
+                <span className="w-12 text-right font-semibold text-white">{percent.toLocaleString("pt-BR", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}%</span>
               </li>
             ))}
           </ul>
         </div>
       )}
-      {sampled && <p className="mt-4 text-[11px] text-slate-600">Calculado sobre as 100 primeiras empresas (ordem alfabética).</p>}
+
+      {companyCount > 0 && (
+        <Link to="/empresas" className="mt-5 text-sm font-medium text-flag-blue hover:text-white">
+          Explorar todas as empresas →
+        </Link>
+      )}
     </Panel>
   );
 }

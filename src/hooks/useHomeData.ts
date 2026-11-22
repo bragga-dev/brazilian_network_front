@@ -1,89 +1,70 @@
+import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import { REGIONS, STATE_REGION, type Region } from "@/constants/regions";
+import { homeService } from "@/services/home.service";
+import type { HomeActivity, HomeJob, HomeRegion, HomeStats } from "@/types/home";
 
-import { useCompanies } from "./useCompanies";
-import { useJobs } from "./useJobs";
-import { useProjects } from "./useProjects";
+export const homeKeys = { all: ["home"] as const };
 
-const REGION_SAMPLE_SIZE = 100; // PAGE_SIZE_MAX do backend
-
-export interface RegionShare {
-  region: Region;
-  count: number;
+export interface RegionShare extends HomeRegion {
   percent: number;
 }
 
 export interface ActivityItem {
   id: string;
-  kind: "job" | "project";
+  kind: "job" | "project" | "company";
   title: string;
   description: string;
   at: string;
   to: string;
 }
 
-/** Tudo que a home precisa, montado só com endpoints públicos que já existem. */
+const ACTIVITY: Record<HomeActivity["type"], { kind: ActivityItem["kind"]; title: string }> = {
+  job_published: { kind: "job", title: "Nova vaga publicada" },
+  project_published: { kind: "project", title: "Novo projeto freelancer" },
+  company_joined: { kind: "company", title: "Nova empresa na plataforma" },
+};
+
+function toActivityItem(event: HomeActivity): ActivityItem {
+  const { kind, title } = ACTIVITY[event.type];
+  const to = { job: `/vagas/${event.ref_id}`, project: "/projetos", company: `/empresas/${event.ref_id}` }[kind];
+  return {
+    id: `${event.type}-${event.ref_id}`,
+    kind,
+    title,
+    description: kind === "company" ? event.company_name : `${event.title ?? "Sem título"} na ${event.company_name}`,
+    at: event.occurred_at,
+    to,
+  };
+}
+
+/** Tudo que a home precisa, numa única chamada a `GET /api/home/` (cache de 60 s no servidor). */
 export function useHomeData() {
-  const jobs = useJobs({ page_size: 5 });
-  const projects = useProjects({ page_size: 5 });
-  const companies = useCompanies({ page_size: REGION_SAMPLE_SIZE });
-  const hiring = useCompanies({ has_open_jobs: true, page_size: 1 });
+  const query = useQuery({
+    queryKey: homeKeys.all,
+    queryFn: homeService.get,
+    staleTime: 60_000,
+  });
+  const data = query.data;
 
   const regions = useMemo<RegionShare[]>(() => {
-    const counts = new Map<Region, number>(REGIONS.map((region) => [region, 0]));
-    for (const company of companies.data?.items ?? []) {
-      const region = company.state ? STATE_REGION[company.state] : undefined;
-      if (region) counts.set(region, (counts.get(region) ?? 0) + 1);
-    }
-    const total = [...counts.values()].reduce((sum, value) => sum + value, 0);
-    return REGIONS.map((region) => {
-      const count = counts.get(region) ?? 0;
-      return { region, count, percent: total ? (count / total) * 100 : 0 };
-    }).sort((a, b) => b.count - a.count);
-  }, [companies.data]);
+    const list = data?.regions ?? [];
+    const total = list.reduce((sum, region) => sum + region.companies_count, 0);
+    return list
+      .map((region) => ({ ...region, percent: total ? (region.companies_count / total) * 100 : 0 }))
+      .sort((a, b) => b.companies_count - a.companies_count);
+  }, [data]);
 
-  const activity = useMemo<ActivityItem[]>(() => {
-    const items: ActivityItem[] = [];
-    for (const job of jobs.data?.items ?? []) {
-      if (!job.published_at) continue;
-      items.push({
-        id: `job-${job.job_id}`,
-        kind: "job",
-        title: "Nova vaga publicada",
-        description: `${job.title} na ${job.company.full_name}`,
-        at: job.published_at,
-        to: `/vagas/${job.job_id}`,
-      });
-    }
-    for (const project of projects.data?.items ?? []) {
-      if (!project.published_at) continue;
-      items.push({
-        id: `project-${project.project_id}`,
-        kind: "project",
-        title: "Novo projeto freelancer",
-        description: `${project.title} na ${project.company.full_name}`,
-        at: project.published_at,
-        to: "/projetos",
-      });
-    }
-    return items.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()).slice(0, 5);
-  }, [jobs.data, projects.data]);
+  const activity = useMemo<ActivityItem[]>(() => (data?.recent_activity ?? []).map(toActivityItem), [data]);
 
   return {
-    featuredJobs: (jobs.data?.items ?? []).slice(0, 3),
-    jobsLoading: jobs.isLoading,
-    activity,
-    activityLoading: jobs.isLoading || projects.isLoading,
+    stats: data?.stats as HomeStats | undefined,
+    featuredJobs: (data?.featured_jobs ?? []) as HomeJob[],
     regions,
-    regionsCompanyCount: companies.data?.items.filter((c) => c.state && STATE_REGION[c.state]).length ?? 0,
-    regionsSampled: (companies.data?.total ?? 0) > REGION_SAMPLE_SIZE,
-    regionsLoading: companies.isLoading,
-    stats: {
-      jobs: jobs.data?.total,
-      companies: companies.data?.total,
-      hiring: hiring.data?.total,
-      projects: projects.data?.total,
-    },
+    regionsCompanyCount: regions.reduce((sum, region) => sum + region.companies_count, 0),
+    activity,
+    loading: query.isLoading,
+    isError: query.isError,
+    refetch: query.refetch,
   };
 }

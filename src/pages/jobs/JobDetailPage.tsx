@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Icon } from "@/components/ui/Icon";
+import { LockedNotice } from "@/components/ui/LockedNotice";
 import { Panel, SectionLabel } from "@/components/ui/Panel";
 import { ErrorState, Spinner } from "@/components/ui/States";
 import { TechBadge } from "@/components/ui/TechBadge";
@@ -67,9 +68,17 @@ export default function JobDetailPage() {
             {formatLocation(job)} · publicada {formatRelative(job.published_at)}
           </p>
 
-          <TextBlock title="Sobre a vaga" text={job.description} />
-          <TextBlock title="Requisitos" text={job.requirements} />
-          <TextBlock title="Benefícios" text={job.benefits} />
+          {job.locked ? (
+            <div className="mt-8">
+              <LockedNotice>Entre na sua conta verificada para ler a descrição, os requisitos, os benefícios e a remuneração desta vaga.</LockedNotice>
+            </div>
+          ) : (
+            <>
+              <TextBlock title="Sobre a vaga" text={job.description} />
+              <TextBlock title="Requisitos" text={job.requirements} />
+              <TextBlock title="Benefícios" text={job.benefits} />
+            </>
+          )}
 
           {job.technologies.length > 0 && (
             <section className="mt-8">
@@ -89,8 +98,12 @@ export default function JobDetailPage() {
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Panel className="p-5">
             <SectionLabel tone="yellow">Remuneração</SectionLabel>
-            <p className="mt-3 text-2xl font-semibold text-white">{formatSalary(job)}</p>
-            {job.contract_type === "freelance" && (
+            {job.locked ? (
+              <p className="mt-3 text-sm text-slate-400">Disponível após o login.</p>
+            ) : (
+              <p className="mt-3 text-2xl font-semibold text-white">{formatSalary(job)}</p>
+            )}
+            {!job.locked && job.contract_type === "freelance" && (
               <ul className="mt-3 space-y-1 text-sm text-slate-400">
                 {job.deadline && <li>Prazo: {formatDate(job.deadline)}</li>}
                 {job.estimated_duration_days && <li>Duração estimada: {job.estimated_duration_days} dias</li>}

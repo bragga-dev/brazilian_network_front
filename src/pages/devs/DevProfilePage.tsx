@@ -83,6 +83,8 @@ export default function DevProfilePage() {
   const links = [
     { href: dev.github_url, label: "GitHub" },
     { href: dev.linkedin_url, label: "LinkedIn" },
+    { href: dev.instagram_url, label: "Instagram" },
+    { href: dev.facebook_url, label: "Facebook" },
     { href: dev.site_url, label: "Site" },
   ].filter((item): item is { href: string; label: string } => Boolean(item.href));
   const topTechs = technologies.slice(0, 6);

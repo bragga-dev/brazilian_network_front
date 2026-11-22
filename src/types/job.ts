@@ -1,5 +1,5 @@
 import type { PageOut } from "./common";
-import type { Technology } from "./technology";
+import type { Technology, WorkArea } from "./technology";
 
 export type ContractType = "clt" | "pj" | "freelance" | "internship" | "temporary";
 export type WorkModel = "remote" | "onsite" | "hybrid";
@@ -16,12 +16,14 @@ export interface JobCompany {
   company_id: string;
   full_name: string;
   photo_url: string | null;
+  is_patriot: boolean;
 }
 
 export interface Job {
   job_id: string;
   title: string;
-  description: string;
+  /** null quando `locked` (visitante sem login/verificação). */
+  description: string | null;
   requirements: string | null;
   benefits: string | null;
   contract_type: ContractType;
@@ -44,7 +46,10 @@ export interface Job {
   published_at: string | null;
   expires_at: string | null;
   technologies: JobTechnology[];
+  areas: WorkArea[];
   company: JobCompany;
+  /** true = só o cartão da vaga; descrição, requisitos, benefícios, remuneração e prazos vêm nulos. */
+  locked: boolean;
 }
 
 export interface JobFilters {
@@ -55,6 +60,8 @@ export interface JobFilters {
   state?: string;
   city?: string;
   salary_min?: string;
+  technology_id?: string;
+  area_id?: string;
   company_id?: string;
   order_by?: JobOrder;
   page?: number;

@@ -9,6 +9,8 @@ import { getStatus } from "@/utils/errors";
 
 import { AuthContext, type AuthContextValue, type AuthStatus } from "./auth-context";
 
+const RESTRICTED_KEYS = ["jobs", "projects", "companies"];
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
@@ -42,10 +44,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [me, setMe] = useState<Me | null>(null);
 
-  const setSession = useCallback((value: Me | null) => {
-    setMe(value);
-    setStatus(value ? "authenticated" : "anonymous");
-  }, []);
+  const setSession = useCallback(
+    (value: Me | null) => {
+      setMe(value);
+      setStatus(value ? "authenticated" : "anonymous");
+      // Vagas e projetos vêm "locked" para visitante: ao logar, o que está em cache precisa ser buscado de novo.
+      if (value) void queryClient.invalidateQueries({ predicate: (query) => RESTRICTED_KEYS.includes(String(query.queryKey[0])) });
+    },
+    [queryClient],
+  );
 
   useEffect(() => {
     let active = true;

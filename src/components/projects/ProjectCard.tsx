@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/Badge";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Icon } from "@/components/ui/Icon";
+import { LockedNotice } from "@/components/ui/LockedNotice";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { EXPERIENCE_ICONS } from "@/constants/icons";
 import type { Project } from "@/types/project";
@@ -25,7 +26,13 @@ export function ProjectCard({ project }: { project: Project }) {
         <span className="shrink-0 text-xs text-slate-500">{formatRelative(project.published_at)}</span>
       </div>
 
-      <p className="mt-3 line-clamp-2 text-sm text-slate-400">{project.description}</p>
+      {project.description ? (
+        <p className="mt-3 line-clamp-2 text-sm text-slate-400">{project.description}</p>
+      ) : (
+        <p className="mt-3">
+          <LockedNotice compact>Entre para ver a descrição do projeto</LockedNotice>
+        </p>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge tone="purple" icon={<Icon icon={EXPERIENCE_ICONS[project.experience_level]} size="xs" />}>
@@ -37,10 +44,18 @@ export function ProjectCard({ project }: { project: Project }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-sm">
-        <span className="flex items-center gap-1.5 text-slate-400">
-          <Clock className="size-4" /> {project.estimated_duration_days} {project.estimated_duration_days === 1 ? "dia" : "dias"}
-        </span>
-        <span className={value === "A combinar" ? "text-slate-500" : "font-semibold text-white"}>{value}</span>
+        {project.estimated_duration_days !== null ? (
+          <span className="flex items-center gap-1.5 text-slate-400">
+            <Clock className="size-4" /> {project.estimated_duration_days} {project.estimated_duration_days === 1 ? "dia" : "dias"}
+          </span>
+        ) : (
+          <span />
+        )}
+        {project.locked ? (
+          <LockedNotice compact>Entre para ver o valor</LockedNotice>
+        ) : (
+          <span className={value === "A combinar" ? "text-slate-500" : "font-semibold text-white"}>{value}</span>
+        )}
       </div>
     </article>
   );

@@ -27,6 +27,8 @@ const schema = z.object({
   birth_date: z.string().refine((v) => !v || v <= new Date().toISOString().slice(0, 10), "A data não pode estar no futuro"),
   github_url: link,
   linkedin_url: link,
+  instagram_url: link,
+  facebook_url: link,
   site_url: link,
   accepts_patriot_discount: z.boolean(),
 });
@@ -43,6 +45,8 @@ const toDefaults = (dev: MyDev): FormValues => ({
   birth_date: dev.birth_date ?? "",
   github_url: dev.github_url ?? "",
   linkedin_url: dev.linkedin_url ?? "",
+  instagram_url: dev.instagram_url ?? "",
+  facebook_url: dev.facebook_url ?? "",
   site_url: dev.site_url ?? "",
   accepts_patriot_discount: dev.accepts_patriot_discount,
 });
@@ -114,6 +118,12 @@ export function DevDataForm({ dev }: { dev: MyDev }) {
         </Field>
         <Field label="LinkedIn" error={errors.linkedin_url?.message}>
           <Input type="url" placeholder="https://linkedin.com/in/usuario" {...register("linkedin_url")} />
+        </Field>
+        <Field label="Instagram" error={errors.instagram_url?.message}>
+          <Input type="url" placeholder="https://instagram.com/usuario" {...register("instagram_url")} />
+        </Field>
+        <Field label="Facebook" error={errors.facebook_url?.message}>
+          <Input type="url" placeholder="https://facebook.com/usuario" {...register("facebook_url")} />
         </Field>
         <Field label="Site / portfólio" error={errors.site_url?.message} className="sm:col-span-2">
           <Input type="url" placeholder="https://meusite.dev" {...register("site_url")} />

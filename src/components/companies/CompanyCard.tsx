@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 
+import { ShieldCheck } from "lucide-react";
+
 import { Badge } from "@/components/ui/Badge";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import type { PublicCompanyListItem } from "@/types/company";
@@ -20,10 +22,15 @@ export function CompanyCard({ company }: { company: PublicCompanyListItem }) {
         </div>
       </div>
       {company.bio && <p className="line-clamp-2 text-sm text-slate-400">{company.bio}</p>}
-      <div className="mt-auto">
+      <div className="mt-auto flex flex-wrap gap-2">
         <Badge tone={company.open_jobs_count > 0 ? "green" : "neutral"}>
           {company.open_jobs_count} {company.open_jobs_count === 1 ? "vaga aberta" : "vagas abertas"}
         </Badge>
+        {company.is_patriot && (
+          <Badge tone="yellow" icon={<ShieldCheck className="size-3" />}>
+            Patriota
+          </Badge>
+        )}
       </div>
     </Link>
   );

@@ -24,6 +24,8 @@ const schema = z.object({
   website: link,
   linkedin_url: link,
   github_url: link,
+  instagram_url: link,
+  facebook_url: link,
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -36,6 +38,8 @@ const toDefaults = (company: CompanyProfile): FormValues => ({
   website: company.website ?? "",
   linkedin_url: company.linkedin_url ?? "",
   github_url: company.github_url ?? "",
+  instagram_url: company.instagram_url ?? "",
+  facebook_url: company.facebook_url ?? "",
 });
 
 export function CompanyDataForm({ company }: { company: CompanyProfile }) {
@@ -93,6 +97,12 @@ export function CompanyDataForm({ company }: { company: CompanyProfile }) {
         </Field>
         <Field label="GitHub" error={errors.github_url?.message} className="sm:col-span-2">
           <Input type="url" placeholder="https://github.com/empresa" {...register("github_url")} />
+        </Field>
+        <Field label="Instagram" error={errors.instagram_url?.message}>
+          <Input type="url" placeholder="https://instagram.com/empresa" {...register("instagram_url")} />
+        </Field>
+        <Field label="Facebook" error={errors.facebook_url?.message}>
+          <Input type="url" placeholder="https://facebook.com/empresa" {...register("facebook_url")} />
         </Field>
         <div className="flex justify-end gap-2 sm:col-span-2">
           <Button type="button" variant="ghost" size="sm" disabled={!isDirty} onClick={() => reset(toDefaults(company))}>

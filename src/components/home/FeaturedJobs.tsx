@@ -2,41 +2,47 @@ import { ArrowRight, Briefcase } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
-import { Icon } from "@/components/ui/Icon";
-import { TechBadge } from "@/components/ui/TechBadge";
-import { CONTRACT_ICONS, WORK_MODEL_ICONS } from "@/constants/icons";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { Icon } from "@/components/ui/Icon";
 import { Panel } from "@/components/ui/Panel";
-import type { Job } from "@/types/job";
-import { formatSalary } from "@/utils/format";
+import { TechIcon } from "@/components/ui/TechIcon";
+import { CONTRACT_ICONS, WORK_MODEL_ICONS } from "@/constants/icons";
+import type { HomeJob } from "@/types/home";
+import { formatLocation } from "@/utils/format";
 
-function JobRow({ job }: { job: Job }) {
-  const salary = formatSalary(job);
+function JobRow({ job }: { job: HomeJob }) {
   return (
     <li>
       <Link to={`/vagas/${job.job_id}`} className="group flex items-center gap-4 py-4 transition hover:bg-white/[0.03] sm:-mx-3 sm:rounded-xl sm:px-3">
         <CompanyLogo name={job.company.full_name} url={job.company.photo_url} className="size-14 text-xl" />
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold text-white group-hover:text-flag-green">{job.title}</p>
-          <p className="truncate text-sm text-slate-400">{job.company.full_name}</p>
+          <p className="truncate text-sm text-slate-400">
+            {job.company.full_name} · {formatLocation(job)}
+          </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {job.technologies.slice(0, 3).map((item) => (
-              <TechBadge key={item.technology.technology_id} technology={item.technology} />
+            {job.technologies.slice(0, 3).map((name) => (
+              <Badge key={name} tone="blue" icon={<TechIcon name={name} />}>
+                {name}
+              </Badge>
             ))}
-            <Badge tone="neutral" icon={<Icon icon={WORK_MODEL_ICONS[job.work_model]} size="xs" />}>{job.work_model_label}</Badge>
+            <Badge tone="neutral" icon={<Icon icon={WORK_MODEL_ICONS[job.work_model]} size="xs" />}>
+              {job.work_model_label}
+            </Badge>
           </div>
-          <p className="mt-2 text-xs font-semibold text-white xl:hidden">{salary === "A combinar" ? "" : salary}</p>
         </div>
         <div className="hidden shrink-0 flex-col items-end gap-2 text-right xl:flex">
-          <Badge tone="green" icon={<Icon icon={CONTRACT_ICONS[job.contract_type]} size="xs" />}>{job.contract_type_label}</Badge>
-          <span className={salary === "A combinar" ? "text-xs text-slate-500" : "text-xs font-semibold text-white"}>{salary}</span>
+          <Badge tone="green" icon={<Icon icon={CONTRACT_ICONS[job.contract_type]} size="xs" />}>
+            {job.contract_type_label}
+          </Badge>
+          <span className="text-xs text-slate-500">{job.experience_level_label}</span>
         </div>
       </Link>
     </li>
   );
 }
 
-export function FeaturedJobs({ jobs, loading }: { jobs: Job[]; loading: boolean }) {
+export function FeaturedJobs({ jobs, loading }: { jobs: HomeJob[]; loading: boolean }) {
   return (
     <Panel className="p-6">
       <div className="flex items-center justify-between">

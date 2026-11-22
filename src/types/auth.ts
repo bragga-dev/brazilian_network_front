@@ -30,6 +30,8 @@ export interface DevProfile {
   bio: string;
   github_url: string | null;
   linkedin_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
   site_url: string | null;
 }
 
@@ -43,6 +45,8 @@ export interface CompanyProfile {
   bio: string;
   github_url: string | null;
   linkedin_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
   website: string | null;
 }
 

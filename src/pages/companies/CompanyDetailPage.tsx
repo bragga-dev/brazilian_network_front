@@ -1,4 +1,4 @@
-import { Briefcase, Cpu, ExternalLink, Globe, MapPin } from "lucide-react";
+import { Briefcase, Cpu, ExternalLink, Globe, MapPin, ShieldCheck } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -69,6 +69,8 @@ export default function CompanyDetailPage() {
     { href: company.website, label: "Site" },
     { href: company.linkedin_url, label: "LinkedIn" },
     { href: company.github_url, label: "GitHub" },
+    { href: company.instagram_url, label: "Instagram" },
+    { href: company.facebook_url, label: "Facebook" },
   ].filter((item): item is { href: string; label: string } => Boolean(item.href));
 
   return (
@@ -96,6 +98,11 @@ export default function CompanyDetailPage() {
                   <a href={company.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-white">
                     <Globe className="size-4 text-flag-blue" /> {company.website.replace(/^https?:\/\//, "")}
                   </a>
+                )}
+                {company.is_patriot && (
+                  <Badge tone="yellow" icon={<ShieldCheck className="size-3" />}>
+                    Patriota
+                  </Badge>
                 )}
                 {jobs.total > 0 && <Badge tone="green">Contratando</Badge>}
               </div>
