@@ -1,4 +1,4 @@
-import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LogIn, LogOut, Menu, Settings, UserPlus, UserRound, Users, X, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LogIn, LogOut, Mail, Menu, Settings, ShieldCheck, UserPlus, UserRound, Users, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
@@ -15,6 +15,8 @@ const NAV: { to: string; label: string; icon: LucideIcon; end?: boolean }[] = [
   { to: "/projetos", label: "Projetos", icon: FolderKanban },
   { to: "/devs", label: "Devs", icon: Users },
   { to: "/empresas", label: "Empresas", icon: Building2 },
+  { to: "/apoie", label: "Apoie", icon: ShieldCheck },
+  { to: "/contato", label: "Contato", icon: Mail },
 ];
 
 function displayName(me: Me): string {

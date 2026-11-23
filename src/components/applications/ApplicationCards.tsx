@@ -1,78 +1,125 @@
-import { FileText, MapPin } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
-import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Panel } from "@/components/ui/Panel";
-import type { ApplicationStatus } from "@/types/application";
-import type { ApplicantDev } from "@/types/manage";
-import { formatDate } from "@/utils/format";
+import type { ApplicationStatus, JobApplication, ProjectApplication } from "@/types/application";
+import { formatDate, formatMoney } from "@/utils/format";
 
-interface Props {
-  dev: ApplicantDev;
-  opportunityTitle: string;
-  opportunityTo: string;
+export interface ApplicationHandlers<T> {
+  onEdit: (item: T) => void;
+  onWithdraw: (item: T) => void;
+  onDelete: (item: T) => void;
+}
+
+/** Regras do backend: edita só pendente; retira pendente/em análise; exclui pendente, recusada ou retirada. */
+const canEdit = (status: ApplicationStatus) => status === "pending";
+const canWithdraw = (status: ApplicationStatus) => status === "pending" || status === "in_review";
+const canDelete = (status: ApplicationStatus) => status === "pending" || status === "rejected" || status === "withdrawn";
+
+interface FrameProps<T> extends ApplicationHandlers<T> {
+  item: T;
   status: ApplicationStatus;
   statusLabel: string;
+  title: string;
+  to: string;
+  company: JobApplication["company"];
   createdAt: string;
-  coverLetter: string;
-  /** Linhas extras (valor e prazo da proposta de projeto). */
-  extra?: ReactNode;
-  actions: ReactNode;
+  updatedAt: string;
+  children?: ReactNode;
 }
 
-function Avatar({ name, url }: { name: string; url: string | null }) {
-  if (url) return <img src={url} alt="" loading="lazy" className="size-12 shrink-0 rounded-full border border-white/15 object-cover" />;
-  return (
-    <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-flag-green to-flag-blue font-bold text-black">
-      {name.trim().charAt(0).toUpperCase() || "?"}
-    </span>
-  );
-}
-
-/** Candidatura recebida: quem se candidatou, a que, a mensagem e as ações permitidas para o status atual. */
-export function ApplicantCard({ dev, opportunityTitle, opportunityTo, status, statusLabel, createdAt, coverLetter, extra, actions }: Props) {
+function Frame<T>({ item, status, statusLabel, title, to, company, createdAt, updatedAt, children, onEdit, onWithdraw, onDelete }: FrameProps<T>) {
   return (
     <Panel className="p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <Avatar name={dev.full_name} url={dev.photo_url} />
-          <div className="min-w-0">
-            <Link to={`/devs/${dev.dev_id}`} className="block truncate font-semibold text-white hover:text-flag-green">
-              {dev.full_name}
-            </Link>
-            <p className="truncate text-sm text-slate-400">{dev.headline || "Dev"}</p>
-          </div>
+      <div className="flex items-start gap-4">
+        <CompanyLogo name={company.full_name} url={company.photo_url} className="size-12 text-lg" />
+        <div className="min-w-0 flex-1">
+          <Link to={to} className="block truncate text-lg font-semibold text-white hover:text-flag-green">
+            {title}
+          </Link>
+          <Link to={`/empresas/${company.company_id}`} className="mt-0.5 inline-block text-sm text-slate-400 hover:text-flag-green">
+            {company.full_name}
+          </Link>
         </div>
         <ApplicationStatusBadge status={status} label={statusLabel} />
       </div>
 
-      <p className="mt-3 text-sm text-slate-400">
-        Para{" "}
-        <Link to={opportunityTo} className="font-medium text-slate-200 hover:text-flag-green">
-          {opportunityTitle}
-        </Link>{" "}
-        · {formatDate(createdAt)}
-      </p>
+      {children}
 
-      {extra}
-
-      <p className="mt-3 whitespace-pre-line rounded-lg bg-white/[0.03] p-3 text-sm text-slate-300">{coverLetter}</p>
-
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {dev.is_patriot && <Badge tone="yellow">Patriota</Badge>}
-        {dev.curriculum_url && (
-          <a href={dev.curriculum_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-flag-green hover:underline">
-            <FileText className="size-4" aria-hidden /> Currículo
-          </a>
-        )}
-        <Link to={`/devs/${dev.dev_id}`} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white">
-          <MapPin className="size-4" aria-hidden /> Ver perfil completo
-        </Link>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
+        <p className="text-xs text-slate-500">
+          Enviada em {formatDate(createdAt)}
+          {updatedAt !== createdAt && ` · atualizada em ${formatDate(updatedAt)}`}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {canEdit(status) && (
+            <Button variant="secondary" size="sm" onClick={() => onEdit(item)}>
+              Editar
+            </Button>
+          )}
+          {canWithdraw(status) && (
+            <Button variant="purple" size="sm" onClick={() => onWithdraw(item)}>
+              Retirar
+            </Button>
+          )}
+          {canDelete(status) && (
+            <Button variant="danger" size="sm" onClick={() => onDelete(item)}>
+              Excluir
+            </Button>
+          )}
+        </div>
       </div>
-
-      {actions && <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">{actions}</div>}
     </Panel>
+  );
+}
+
+export function JobApplicationCard({ item, ...handlers }: { item: JobApplication } & ApplicationHandlers<JobApplication>) {
+  return (
+    <Frame
+      item={item}
+      status={item.status}
+      statusLabel={item.status_label}
+      title={item.job_title}
+      to={`/vagas/${item.job_id}`}
+      company={item.company}
+      createdAt={item.created_at}
+      updatedAt={item.updated_at}
+      {...handlers}
+    >
+      {item.cover_letter && <p className="mt-3 line-clamp-3 whitespace-pre-line text-sm text-slate-400">{item.cover_letter}</p>}
+    </Frame>
+  );
+}
+
+export function ProjectApplicationCard({ item, ...handlers }: { item: ProjectApplication } & ApplicationHandlers<ProjectApplication>) {
+  return (
+    <Frame
+      item={item}
+      status={item.status}
+      statusLabel={item.status_label}
+      title={item.project_title}
+      to={`/projetos/${item.project_id}`}
+      company={item.company}
+      createdAt={item.created_at}
+      updatedAt={item.updated_at}
+      {...handlers}
+    >
+      <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        <div className="flex gap-1.5">
+          <dt className="text-slate-500">Valor proposto:</dt>
+          <dd className="font-semibold text-white">{formatMoney(item.proposed_value)}</dd>
+        </div>
+        <div className="flex gap-1.5">
+          <dt className="text-slate-500">Prazo:</dt>
+          <dd className="font-semibold text-white">
+            {item.proposed_duration_days} {item.proposed_duration_days === 1 ? "dia" : "dias"}
+          </dd>
+        </div>
+      </dl>
+      {item.cover_letter && <p className="mt-3 line-clamp-3 whitespace-pre-line text-sm text-slate-400">{item.cover_letter}</p>}
+    </Frame>
   );
 }

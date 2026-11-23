@@ -8,6 +8,7 @@ import { SectionLabel } from "@/components/ui/Panel";
 import { EmptyState, ErrorState, Spinner } from "@/components/ui/States";
 import { STATES } from "@/constants/jobOptions";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAuth } from "@/hooks/useAuth";
 import { useDevs, useTechnologyOptions } from "@/hooks/useDevs";
 import { getErrorMessage } from "@/utils/errors";
 
@@ -55,7 +56,8 @@ export default function DevsPage() {
     setParams({}, { replace: true });
   };
 
-  const technologies = useTechnologyOptions();
+  const { status } = useAuth();
+  const technologies = useTechnologyOptions(status === "authenticated");
   const { data, isPending, isError, error, refetch, isFetching } = useDevs({
     q: urlQ,
     city: urlCity,
@@ -76,16 +78,18 @@ export default function DevsPage() {
         <Field label="Buscar">
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nome, usuário ou título" />
         </Field>
-        <Field label="Tecnologia">
-          <Select value={technologyId} onChange={(e) => update({ technology_id: e.target.value })}>
-            <option value="">Todas</option>
-            {(technologies.data ?? []).map((technology) => (
-              <option key={technology.technology_id} value={technology.technology_id}>
-                {technology.name}
-              </option>
-            ))}
-          </Select>
-        </Field>
+        {status === "authenticated" && (
+          <Field label="Tecnologia">
+            <Select value={technologyId} onChange={(e) => update({ technology_id: e.target.value })}>
+              <option value="">Todas</option>
+              {(technologies.data ?? []).map((technology) => (
+                <option key={technology.technology_id} value={technology.technology_id}>
+                  {technology.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        )}
         <Field label="Estado">
           <Select value={state} onChange={(e) => update({ state: e.target.value })}>
             <option value="">Todos</option>

@@ -21,6 +21,12 @@ export function Footer() {
           <Link to="/empresas" className="hover:text-white">
             Empresas
           </Link>
+          <Link to="/apoie" className="hover:text-white">
+            Apoie
+          </Link>
+          <Link to="/contato" className="hover:text-white">
+            Contato
+          </Link>
           <Link to="/cadastro" className="hover:text-white">
             Criar conta
           </Link>
