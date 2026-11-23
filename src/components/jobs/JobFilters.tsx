@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Field, Input, Select } from "@/components/ui/Field";
 import { CONTRACT_OPTIONS, EXPERIENCE_OPTIONS, ORDER_OPTIONS, STATES, WORK_MODEL_OPTIONS } from "@/constants/jobOptions";
+import { useAreas } from "@/hooks/useAreas";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { JobFilters as Filters, JobOrder } from "@/types/job";
 
@@ -10,9 +11,12 @@ interface Props {
   onChange: (patch: Partial<Filters>) => void;
   onClear: () => void;
   hasActive: boolean;
+  /** Sem acesso liberado: busca só no título, sem filtro/ordenação por remuneração (o backend também ignora). */
+  restricted?: boolean;
 }
 
-export function JobFilters({ filters, onChange, onClear, hasActive }: Props) {
+export function JobFilters({ filters, onChange, onClear, hasActive, restricted = false }: Props) {
+  const { data: areas = [] } = useAreas();
   // Campos de texto têm estado local + debounce para não disparar request a cada tecla.
   const [q, setQ] = useState(filters.q ?? "");
   const [city, setCity] = useState(filters.city ?? "");
@@ -50,7 +54,18 @@ export function JobFilters({ filters, onChange, onClear, hasActive }: Props) {
       </div>
 
       <Field label="Buscar">
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Título ou descrição" />
+        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={restricted ? "Título" : "Título ou descrição"} />
+      </Field>
+
+      <Field label="Área">
+        <Select value={filters.area_id ?? ""} onChange={(e) => onChange({ area_id: e.target.value })}>
+          <option value="">Todas</option>
+          {areas.map((area) => (
+            <option key={area.work_area_id} value={area.work_area_id}>
+              {area.name}
+            </option>
+          ))}
+        </Select>
       </Field>
 
       <Field label="Contratação">
@@ -105,13 +120,21 @@ export function JobFilters({ filters, onChange, onClear, hasActive }: Props) {
         </Field>
       </div>
 
-      <Field label="Remuneração mínima (R$)" hint="Vagas com remuneração oculta não entram no filtro.">
-        <Input type="number" min={0} inputMode="numeric" value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="Ex.: 5000" />
+      <Field label="Remuneração mínima (R$)" hint={restricted ? "Disponível para usuários cadastrados." : "Vagas com remuneração oculta não entram no filtro."}>
+        <Input
+          type="number"
+          min={0}
+          inputMode="numeric"
+          value={restricted ? "" : salary}
+          disabled={restricted}
+          onChange={(e) => setSalary(e.target.value)}
+          placeholder="Ex.: 5000"
+        />
       </Field>
 
       <Field label="Ordenar por">
         <Select value={filters.order_by ?? "-published_at"} onChange={(e) => onChange({ order_by: e.target.value as JobOrder })}>
-          {ORDER_OPTIONS.map((o) => (
+          {ORDER_OPTIONS.filter((o) => !restricted || o.value === "-published_at").map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
             </option>

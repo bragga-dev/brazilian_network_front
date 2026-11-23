@@ -40,6 +40,11 @@ export function ProjectCard({ project }: { project: Project }) {
         <Badge tone="purple" icon={<Icon icon={EXPERIENCE_ICONS[project.experience_level]} size="xs" />}>
           {project.experience_level_label}
         </Badge>
+        {project.areas.map((area) => (
+          <Badge key={area.work_area_id} tone="blue">
+            {area.name}
+          </Badge>
+        ))}
         {project.technologies.slice(0, 5).map((item) => (
           <TechBadge key={item.technology.technology_id} technology={item.technology} />
         ))}

@@ -1,7 +1,8 @@
 import { api } from "@/lib/api";
+import type { PageOut } from "@/types/common";
 import type {
   Course, CourseInput, CourseUpdate, DevTechnology, DevTechnologyInput, DevTechnologyUpdate, Education, EducationInput,
-  EducationUpdate, Experience, ExperienceInput, ExperienceUpdate, MyProfile, PublicProfile, TechnologyCategory, TechnologyPage,
+  DevFilters, EducationUpdate, Experience, PublicDevListItem, ExperienceInput, ExperienceUpdate, MyProfile, PublicProfile, TechnologyCategory, TechnologyPage,
 } from "@/types/profile";
 
 /** CRUD padrão das seções do perfil (todas: GET /, POST /, PATCH /{id}, DELETE /{id}; DELETE devolve 204). */
@@ -19,6 +20,14 @@ function section<T, I, U>(base: string) {
 export const profileService = {
   async mine(): Promise<MyProfile> {
     return (await api.get<MyProfile>("/profile/me")).data;
+  },
+
+  /** Lista pública de devs (sem login): filtros `q`, `state`, `city`, `technology_id`, `is_patriot` e paginação. */
+  async listDevs(filters: DevFilters = {}): Promise<PageOut<PublicDevListItem>> {
+    const params = Object.fromEntries(
+      Object.entries(filters).filter(([key, value]) => value !== undefined && value !== null && value !== "" && !(key === "is_patriot" && value === false)),
+    );
+    return (await api.get<PageOut<PublicDevListItem>>("/profile/devs/", { params })).data;
   },
 
   async publicProfile(devId: string): Promise<PublicProfile> {

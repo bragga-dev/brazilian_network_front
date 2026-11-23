@@ -38,6 +38,11 @@ export function JobCard({ job }: { job: Job }) {
           {job.work_model_label}
         </Badge>
         <Badge icon={<Icon icon={EXPERIENCE_ICONS[job.experience_level]} size="xs" />}>{job.experience_level_label}</Badge>
+        {job.areas.map((area) => (
+          <Badge key={area.work_area_id} tone="blue">
+            {area.name}
+          </Badge>
+        ))}
         {job.technologies.slice(0, 4).map((item) => (
           <TechBadge key={item.technology.technology_id} technology={item.technology} />
         ))}

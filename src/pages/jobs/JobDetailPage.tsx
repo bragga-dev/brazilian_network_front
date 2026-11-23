@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
+import { ApplyAction } from "@/components/applications/ApplyAction";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
@@ -25,9 +26,9 @@ function TextBlock({ title, text }: { title: string; text: string | null }) {
 
 export default function JobDetailPage() {
   const { jobId } = useParams();
-  const { data: job, isLoading, isError, error, refetch } = useJob(jobId);
+  const { data: job, isPending, isError, error, refetch } = useJob(jobId);
 
-  if (isLoading) return <Spinner />;
+  if (isPending && !isError) return <Spinner />;
   if (isError || !job) {
     const notFound = getStatus(error) === 404;
     return (
@@ -62,6 +63,11 @@ export default function JobDetailPage() {
               {job.work_model_label}
             </Badge>
             <Badge icon={<Icon icon={EXPERIENCE_ICONS[job.experience_level]} size="xs" />}>{job.experience_level_label}</Badge>
+            {job.areas.map((area) => (
+              <Badge key={area.work_area_id} tone="blue">
+                {area.name}
+              </Badge>
+            ))}
           </div>
           <h1 className="mt-4 text-3xl font-bold text-white sm:text-4xl">{job.title}</h1>
           <p className="mt-2 text-slate-400">
@@ -109,9 +115,7 @@ export default function JobDetailPage() {
                 {job.estimated_duration_days && <li>Duração estimada: {job.estimated_duration_days} dias</li>}
               </ul>
             )}
-            <button disabled className={buttonClasses("primary", "md", "mt-5 w-full")} title="Em breve">
-              Candidatar-se (em breve)
-            </button>
+            <ApplyAction kind="job" target={{ id: job.job_id, title: job.title }} />
           </Panel>
 
           <Panel className="p-5">

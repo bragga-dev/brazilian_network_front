@@ -85,6 +85,25 @@ export interface ProfileSections {
   courses: Course[];
 }
 
+/** Cartão da listagem pública de devs (`GET /profile/devs/`). */
+export interface PublicDevListItem extends PublicDev {
+  city: string | null;
+  state: string | null;
+  /** Principais tecnologias visíveis (mais proficientes primeiro); `technologies_count` é o total. */
+  technologies: Technology[];
+  technologies_count: number;
+}
+
+export interface DevFilters {
+  q?: string;
+  state?: string;
+  city?: string;
+  technology_id?: string;
+  is_patriot?: boolean;
+  page?: number;
+  page_size?: number;
+}
+
 export interface MyProfile extends ProfileSections {
   dev: MyDev;
 }
@@ -185,7 +204,8 @@ export interface ExperienceInput {
   employment_type: EmploymentType;
   description?: string;
   start_date: string;
-  end_date?: string;
+  /** null limpa o término (ao marcar "emprego atual" numa experiência que já tinha data final). */
+  end_date?: string | null;
   is_current: boolean;
 }
 export type ExperienceUpdate = Partial<ExperienceInput> & { is_active?: boolean };

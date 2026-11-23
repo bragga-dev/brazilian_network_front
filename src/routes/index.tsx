@@ -22,6 +22,7 @@ export const router = createBrowserRouter([
       { path: "vagas/:jobId", lazy: page(() => import("@/pages/jobs/JobDetailPage")) },
       { path: "projetos", lazy: page(() => import("@/pages/projects/ProjectsPage")) },
       { path: "projetos/:projectId", lazy: page(() => import("@/pages/projects/ProjectDetailPage")) },
+      { path: "devs", lazy: page(() => import("@/pages/devs/DevsPage")) },
       { path: "devs/:devId", lazy: page(() => import("@/pages/devs/DevProfilePage")) },
       { path: "empresas", lazy: page(() => import("@/pages/companies/CompaniesPage")) },
       { path: "empresas/:companyId", lazy: page(() => import("@/pages/companies/CompanyDetailPage")) },
@@ -45,6 +46,13 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute roles={["dev"]} />,
         children: [{ path: "candidaturas", lazy: page(() => import("@/pages/applications/MyApplicationsPage")) }],
+      },
+      {
+        element: <ProtectedRoute roles={["company"]} />,
+        children: [
+          { path: "empresa/oportunidades", lazy: page(() => import("@/pages/company/MyListingsPage")) },
+          { path: "empresa/candidaturas", lazy: page(() => import("@/pages/company/ReceivedApplicationsPage")) },
+        ],
       },
       // Destinos dos links enviados por e-mail (acessíveis logado ou não)
       { path: "verificacao-concluida", lazy: page(() => import("@/pages/auth/VerificationResultPage")) },

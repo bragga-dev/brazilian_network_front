@@ -6,12 +6,14 @@ interface Props {
   title: string;
   message: string;
   confirmLabel?: string;
+  /** `danger` (padrão) para exclusões; `primary` para confirmações positivas, como aprovar. */
+  variant?: "danger" | "primary";
   loading?: boolean;
   onConfirm: () => void;
   onClose: () => void;
 }
 
-export function ConfirmDialog({ open, title, message, confirmLabel = "Excluir", loading, onConfirm, onClose }: Props) {
+export function ConfirmDialog({ open, title, message, confirmLabel = "Excluir", variant = "danger", loading, onConfirm, onClose }: Props) {
   return (
     <Modal open={open} onClose={onClose} title={title}>
       <p className="text-sm text-slate-300">{message}</p>
@@ -19,7 +21,7 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Excluir", 
         <Button variant="ghost" size="sm" onClick={onClose}>
           Cancelar
         </Button>
-        <Button variant="danger" size="sm" loading={loading} onClick={onConfirm}>
+        <Button variant={variant} size="sm" loading={loading} onClick={onConfirm}>
           {confirmLabel}
         </Button>
       </div>

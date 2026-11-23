@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import type { JobFilters, JobOrder } from "@/types/job";
 
 export const JOBS_PAGE_SIZE = 10;
-const FILTER_KEYS = ["q", "contract_type", "work_model", "experience_level", "state", "city", "salary_min", "order_by"];
+const FILTER_KEYS = ["q", "contract_type", "work_model", "experience_level", "state", "city", "area_id", "salary_min", "order_by"];
 
 /** Filtros da listagem de vagas ficam na URL (compartilháveis, voltam no "voltar" do navegador). */
 export function useJobFilters() {
@@ -18,6 +18,7 @@ export function useJobFilters() {
       experience_level: (params.get("experience_level") ?? "") as JobFilters["experience_level"],
       state: params.get("state") ?? "",
       city: params.get("city") ?? "",
+      area_id: params.get("area_id") ?? "",
       salary_min: params.get("salary_min") ?? "",
       order_by: (params.get("order_by") as JobOrder | null) ?? "-published_at",
       page: Math.max(1, Number(params.get("page")) || 1),

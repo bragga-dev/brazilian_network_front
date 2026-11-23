@@ -3,11 +3,14 @@ import { useSearchParams } from "react-router-dom";
 
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { Field, Input, Select } from "@/components/ui/Field";
+import { LockedNotice } from "@/components/ui/LockedNotice";
 import { Pagination } from "@/components/ui/Pagination";
 import { SectionLabel } from "@/components/ui/Panel";
 import { EmptyState, ErrorState, Spinner } from "@/components/ui/States";
 import { EXPERIENCE_OPTIONS } from "@/constants/jobOptions";
+import { useAreas } from "@/hooks/useAreas";
 import { useDebounce } from "@/hooks/useDebounce";
+import { usePrivateAccess } from "@/hooks/usePrivateAccess";
 import { useProjects } from "@/hooks/useProjects";
 import type { ExperienceLevel } from "@/types/job";
 import type { ProjectOrder } from "@/types/project";
@@ -23,7 +26,10 @@ export default function ProjectsPage() {
   const urlQ = params.get("q") ?? "";
   const level = (params.get("experience_level") ?? "") as ExperienceLevel | "";
   const order = (params.get("order_by") as ProjectOrder | null) ?? "-published_at";
+  const areaId = params.get("area_id") ?? "";
   const page = Math.max(1, Number(params.get("page")) || 1);
+  const canViewPrivate = usePrivateAccess();
+  const { data: areas = [] } = useAreas();
 
   const [q, setQ] = useState(urlQ);
   const dq = useDebounce(q);
@@ -46,10 +52,11 @@ export default function ProjectsPage() {
     if (dq !== urlQ) update({ q: dq });
   }, [dq]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { data, isLoading, isError, error, refetch, isFetching } = useProjects({
+  const { data, isPending, isError, error, refetch, isFetching } = useProjects({
     q: urlQ,
     experience_level: level,
-    order_by: order,
+    area_id: areaId,
+    order_by: canViewPrivate ? order : "-published_at",
     page,
     page_size: 10,
   });
@@ -60,9 +67,25 @@ export default function ProjectsPage() {
       <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Projetos freelancer</h1>
       <p className="mt-2 text-slate-400">{data ? `${data.total} ${data.total === 1 ? "projeto aberto" : "projetos abertos"}` : " "}</p>
 
-      <div className="mt-8 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-[1fr_180px_180px] sm:items-end">
+      {!canViewPrivate && (
+        <div className="mt-6">
+          <LockedNotice>Descrição, requisitos, valor e prazo dos projetos são exibidos só para usuários cadastrados e com e-mail verificado.</LockedNotice>
+        </div>
+      )}
+
+      <div className="mt-8 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-[1fr_180px_180px_180px] sm:items-end">
         <Field label="Buscar projeto">
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Título ou descrição" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={canViewPrivate ? "Título ou descrição" : "Título"} />
+        </Field>
+        <Field label="Área">
+          <Select value={areaId} onChange={(e) => update({ area_id: e.target.value })}>
+            <option value="">Todas</option>
+            {areas.map((area) => (
+              <option key={area.work_area_id} value={area.work_area_id}>
+                {area.name}
+              </option>
+            ))}
+          </Select>
         </Field>
         <Field label="Nível">
           <Select value={level} onChange={(e) => update({ experience_level: e.target.value })}>
@@ -76,7 +99,7 @@ export default function ProjectsPage() {
         </Field>
         <Field label="Ordenar por">
           <Select value={order} onChange={(e) => update({ order_by: e.target.value })}>
-            {ORDER_OPTIONS.map((o) => (
+            {ORDER_OPTIONS.filter((o) => canViewPrivate || o.value === "-published_at").map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
@@ -86,7 +109,7 @@ export default function ProjectsPage() {
       </div>
 
       <section className="mt-6" aria-busy={isFetching}>
-        {isLoading && <Spinner />}
+        {isPending && !isError && <Spinner />}
         {isError && <ErrorState message={getErrorMessage(error)} onRetry={() => void refetch()} />}
         {data && data.items.length === 0 && <EmptyState title="Nenhum projeto encontrado">Ajuste os filtros e tente de novo.</EmptyState>}
         {data && data.items.length > 0 && (

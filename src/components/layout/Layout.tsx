@@ -5,6 +5,7 @@ import { ProfileCompletionBanner } from "@/components/auth/ProfileCompletionBann
 
 import { Footer } from "./Footer";
 import { Header } from "./Header";
+import { MetricsTracker } from "./MetricsTracker";
 
 export function Layout() {
   return (
@@ -16,6 +17,7 @@ export function Layout() {
       </main>
       <Footer />
       <ConsentGate />
+      <MetricsTracker />
       <ScrollRestoration />
     </div>
   );

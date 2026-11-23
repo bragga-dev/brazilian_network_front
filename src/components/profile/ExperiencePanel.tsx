@@ -24,7 +24,8 @@ const schema = z
     employment_type: z.enum(EMPLOYMENT_TYPE_OPTIONS.map((o) => o.value) as [string, ...string[]]),
     is_current: z.boolean(),
     start_date: z.string().min(1, "Informe a data de início"),
-    end_date: z.string(),
+    // Desabilitado quando "emprego atual": o react-hook-form devolve undefined para campo disabled.
+    end_date: z.string().optional(),
     description: z.string().max(5000, "Máximo de 5000 caracteres"),
   })
   .superRefine((v, ctx) => {
@@ -58,7 +59,7 @@ function ExperienceForm({ item, onClose }: { item: Experience | null; onClose: (
 
   const onSubmit = async (values: FormValues) => {
     setError(null);
-    const data = { ...values, end_date: values.is_current || !values.end_date ? undefined : values.end_date } as ExperienceInput;
+    const data = { ...values, end_date: values.is_current || !values.end_date ? null : values.end_date } as ExperienceInput;
     try {
       if (item) await update.mutateAsync({ id: item.experience_id, data });
       else await create.mutateAsync(data);
@@ -115,27 +116,30 @@ export function ExperiencePanel({ items }: { items: Experience[] }) {
   const remove = useProfileMutation(profileService.experiences.remove);
 
   return (
-    <SectionPanel
-      title="Experiência profissional"
-      hint="Empregos, estágios, freelas e trabalhos voluntários."
-      addLabel="Adicionar experiência"
-      onAdd={() => setEditing("new")}
-      empty={items.length === 0 ? "Nenhuma experiência cadastrada." : undefined}
-    >
-      {items.map((item) => (
-        <ExperienceCard
-          key={item.experience_id}
-          item={item}
-          actions={
-            <ItemActions
-              active={item.is_active}
-              onToggle={() => update.mutate({ id: item.experience_id, data: { is_active: !item.is_active } })}
-              onEdit={() => setEditing(item)}
-              onDelete={() => setDeleting(item)}
-            />
-          }
-        />
-      ))}
+    <>
+      <SectionPanel
+        title="Experiência profissional"
+        hint="Empregos, estágios, freelas e trabalhos voluntários."
+        addLabel="Adicionar experiência"
+        onAdd={() => setEditing("new")}
+        empty={items.length === 0 ? "Nenhuma experiência cadastrada." : undefined}
+      >
+        {items.map((item) => (
+          <ExperienceCard
+            key={item.experience_id}
+            item={item}
+            actions={
+              <ItemActions
+                active={item.is_active}
+                onToggle={() => update.mutate({ id: item.experience_id, data: { is_active: !item.is_active } })}
+                onEdit={() => setEditing(item)}
+                onDelete={() => setDeleting(item)}
+              />
+            }
+          />
+        ))}
+      </SectionPanel>
+      {/* Fora do SectionPanel: com a lista vazia ele não renderiza os filhos, e o modal nunca abria. */}
       <Modal open={editing !== null} onClose={() => setEditing(null)} title={editing && editing !== "new" ? "Editar experiência" : "Nova experiência"} wide>
         {editing !== null && <ExperienceForm item={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
       </Modal>
@@ -147,6 +151,6 @@ export function ExperiencePanel({ items }: { items: Experience[] }) {
         onConfirm={() => deleting && remove.mutate(deleting.experience_id, { onSuccess: () => setDeleting(null) })}
         onClose={() => setDeleting(null)}
       />
-    </SectionPanel>
+    </>
   );
 }

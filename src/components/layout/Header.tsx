@@ -1,4 +1,4 @@
-import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LogIn, LogOut, Menu, Settings, UserPlus, UserRound, X, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LogIn, LogOut, Menu, Settings, UserPlus, UserRound, Users, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
@@ -13,6 +13,7 @@ const NAV: { to: string; label: string; icon: LucideIcon; end?: boolean }[] = [
   { to: "/", label: "Início", icon: House, end: true },
   { to: "/vagas", label: "Vagas", icon: Briefcase },
   { to: "/projetos", label: "Projetos", icon: FolderKanban },
+  { to: "/devs", label: "Devs", icon: Users },
   { to: "/empresas", label: "Empresas", icon: Building2 },
 ];
 
@@ -84,6 +85,26 @@ function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
             >
               <ClipboardList className="size-4" /> Minhas candidaturas
             </Link>
+          )}
+          {me.user.role === "company" && (
+            <>
+              <Link
+                to="/empresa/oportunidades"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+              >
+                <Briefcase className="size-4" /> Minhas vagas e projetos
+              </Link>
+              <Link
+                to="/empresa/candidaturas"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+              >
+                <ClipboardList className="size-4" /> Candidaturas recebidas
+              </Link>
+            </>
           )}
           <Link
             to={me.user.role === "admin" ? "/conta" : "/perfil?aba=conta"}
