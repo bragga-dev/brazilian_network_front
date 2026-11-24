@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+import { REGION_LABELS, REGION_ORDER } from "@/constants/regions";
 import { homeService } from "@/services/home.service";
 import type { HomeActivity, HomeJob, HomeRegion, HomeStats } from "@/types/home";
 
@@ -47,8 +48,12 @@ export function useHomeData() {
   });
   const data = query.data;
 
+  // Sempre as 5 regiões (mesmo sem empresas), para o mapa colorir e listar todas.
   const regions = useMemo<RegionShare[]>(() => {
-    const list = data?.regions ?? [];
+    const byKey = new Map((data?.regions ?? []).map((region) => [region.region, region]));
+    const list: HomeRegion[] = REGION_ORDER.map(
+      (key) => byKey.get(key) ?? { region: key, label: REGION_LABELS[key], states: [], companies_count: 0, open_jobs_count: 0, companies: [] },
+    );
     const total = list.reduce((sum, region) => sum + region.companies_count, 0);
     return list
       .map((region) => ({ ...region, percent: total ? (region.companies_count / total) * 100 : 0 }))
