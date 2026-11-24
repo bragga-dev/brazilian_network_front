@@ -37,7 +37,7 @@ export function BrazilMap({ counts, active, onSelect, onHover }: Props) {
             const region = REGION_OF_UF[state.uf];
             const empty = counts[region] === 0;
             const highlighted = focus === region;
-            const opacity = empty ? 0.14 : highlighted ? 0.95 : focus ? 0.35 : 0.62;
+            const opacity = empty ? 0.14 : state.uf === hoverUf ? 1 : highlighted ? (hoverUf ? 0.6 : 0.95) : focus ? 0.3 : 0.62;
             return (
               <path
                 key={state.uf}
@@ -68,11 +68,16 @@ export function BrazilMap({ counts, active, onSelect, onHover }: Props) {
           })}
         </g>
 
-        {/* Contorno da região em foco: camada separada, sem capturar o mouse (evita flicker de hover). */}
-        <g pointerEvents="none" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinejoin="round">
+        {/* Contornos em camadas separadas, sem capturar o mouse (evita flicker de hover): região em foco e, por cima, o estado sob o cursor. */}
+        <g pointerEvents="none" fill="none" stroke="#fff" strokeLinejoin="round" strokeWidth={hoverUf ? 1 : 1.8} strokeOpacity={hoverUf ? 0.55 : 1}>
           {focus &&
-            BRAZIL_STATES.filter((state) => REGION_OF_UF[state.uf] === focus).map((state) => <path key={state.uf} d={state.path} style={{ filter: `drop-shadow(0 0 6px ${REGION_COLORS[focus]})` }} />)}
+            BRAZIL_STATES.filter((state) => REGION_OF_UF[state.uf] === focus && state.uf !== hoverUf).map((state) => (
+              <path key={state.uf} d={state.path} style={{ filter: `drop-shadow(0 0 6px ${REGION_COLORS[focus]})` }} />
+            ))}
         </g>
+        {hoverState && (
+          <path d={hoverState.path} pointerEvents="none" fill="none" stroke="#fff" strokeWidth={2.6} strokeLinejoin="round" style={{ filter: `drop-shadow(0 0 8px ${REGION_COLORS[REGION_OF_UF[hoverState.uf]]})` }} />
+        )}
 
         <g pointerEvents="none" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700} fill="#fff" stroke="rgba(0,0,0,0.65)" strokeWidth={3} paintOrder="stroke">
           {BRAZIL_STATES.filter((state) => state.size >= LABEL_MIN_SIZE).map((state) => (

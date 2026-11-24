@@ -1,4 +1,4 @@
-import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LayoutDashboard, LogIn, LogOut, Mail, Menu, Settings, ShieldCheck, UserPlus, UserRound, Users, X, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LayoutDashboard, LogIn, LogOut, Mail, Menu, Settings, ShieldCheck, UserRound, Users, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
@@ -177,16 +177,11 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {status === "loading" && <span className="h-10 w-48" aria-hidden />}
+          {status === "loading" && <span className="h-10 w-24" aria-hidden />}
           {status === "anonymous" && (
-            <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/cadastro" className={buttonClasses("purple", "sm")}>
-                <UserPlus className="size-4" /> Cadastrar
-              </Link>
-              <Link to="/entrar" className={buttonClasses("secondary", "sm")}>
-                <LogIn className="size-4" /> Login
-              </Link>
-            </div>
+            <Link to="/entrar" className={buttonClasses("primary", "sm", "hidden sm:inline-flex")}>
+              <LogIn className="size-4" /> Entrar
+            </Link>
           )}
           {status === "authenticated" && me && <UserMenu me={me} onLogout={() => void logout()} />}
 
@@ -216,14 +211,9 @@ export function Header() {
             </NavLink>
           ))}
           {status === "anonymous" && (
-            <div className="mt-3 flex gap-2 sm:hidden">
-              <Link to="/cadastro" className={buttonClasses("purple", "sm", "flex-1")}>
-                Cadastrar
-              </Link>
-              <Link to="/entrar" className={buttonClasses("secondary", "sm", "flex-1")}>
-                Login
-              </Link>
-            </div>
+            <Link to="/entrar" className={buttonClasses("primary", "sm", "mt-3 w-full sm:hidden")}>
+              <LogIn className="size-4" /> Entrar
+            </Link>
           )}
         </nav>
       )}
