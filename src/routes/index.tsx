@@ -50,6 +50,10 @@ export const router = createBrowserRouter([
         children: [{ path: "candidaturas", lazy: page(() => import("@/pages/applications/MyApplicationsPage")) }],
       },
       {
+        element: <ProtectedRoute roles={["admin"]} />,
+        children: [{ path: "admin", lazy: page(() => import("@/pages/admin/AdminPage")) }],
+      },
+      {
         element: <ProtectedRoute roles={["company"]} />,
         children: [
           { path: "empresa/oportunidades", lazy: page(() => import("@/pages/company/MyListingsPage")) },

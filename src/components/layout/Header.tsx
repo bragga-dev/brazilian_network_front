@@ -1,4 +1,4 @@
-import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LogIn, LogOut, Mail, Menu, Settings, ShieldCheck, UserPlus, UserRound, Users, X, type LucideIcon } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, LayoutDashboard, LogIn, LogOut, Mail, Menu, Settings, ShieldCheck, UserPlus, UserRound, Users, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
@@ -20,11 +20,11 @@ const NAV: { to: string; label: string; icon: LucideIcon; end?: boolean }[] = [
 ];
 
 function displayName(me: Me): string {
-  return me.dev?.first_name || me.company?.full_name || me.user.email;
+  return me.dev?.first_name || me.company?.full_name || me.admin?.full_name || me.user.email;
 }
 
 function Avatar({ me }: { me: Me }) {
-  const url = me.dev?.photo_url ?? me.company?.photo_url;
+  const url = me.dev?.photo_url ?? me.company?.photo_url ?? me.admin?.photo_url;
   if (url) return <img src={url} alt="" className="size-10 rounded-full border border-white/15 object-cover" />;
   return (
     <span className="flex size-10 items-center justify-center rounded-full bg-linear-to-br from-flag-green to-flag-blue font-bold text-black">
@@ -76,6 +76,16 @@ function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
               className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
             >
               <UserRound className="size-4" /> Meu perfil
+            </Link>
+          )}
+          {me.user.role === "admin" && (
+            <Link
+              to="/admin"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+            >
+              <LayoutDashboard className="size-4" /> Painel admin
             </Link>
           )}
           {me.user.role === "dev" && (

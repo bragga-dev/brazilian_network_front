@@ -61,7 +61,7 @@ export interface Me {
   user: User;
   dev: DevProfile | null;
   company: CompanyProfile | null;
-  admin: { full_name?: string | null } | null;
+  admin: { admin_id?: string; full_name?: string | null; photo_url?: string | null } | null;
   profile_completion: ProfileCompletion | null;
 }
 
