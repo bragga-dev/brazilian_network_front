@@ -1,4 +1,4 @@
-import { Briefcase, Cpu, ExternalLink, Globe, MapPin, ShieldCheck } from "lucide-react";
+import { Briefcase, Cpu, ExternalLink, Globe, MapPin } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -6,7 +6,8 @@ import { JobCard } from "@/components/jobs/JobCard";
 import { Badge } from "@/components/ui/Badge";
 import { TechIcon } from "@/components/ui/TechIcon";
 import { buttonClasses } from "@/components/ui/Button";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Pagination } from "@/components/ui/Pagination";
 import { Panel } from "@/components/ui/Panel";
 import { EmptyState, ErrorState, Spinner } from "@/components/ui/States";
@@ -82,9 +83,7 @@ export default function CompanyDetailPage() {
             ← Voltar para empresas
           </Link>
           <div className="mt-8 flex flex-col items-center gap-6 text-center md:flex-row md:items-end md:text-left">
-            <div className="shrink-0 rounded-2xl bg-linear-to-br from-flag-green via-flag-yellow to-flag-blue p-[3px]">
-              <CompanyLogo name={company.full_name} url={company.photo_url} className="size-28 rounded-[calc(1rem-2px)] text-5xl md:size-36" />
-            </div>
+            <PatriotAvatar shape="square" name={company.full_name} url={company.photo_url} patriot={company.is_patriot} className="size-28 md:size-36" textClassName="text-5xl" />
             <div className="min-w-0 flex-1">
               <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{company.full_name}</h1>
               {company.bio && <p className="mt-2 line-clamp-2 max-w-2xl text-lg text-slate-300">{company.bio}</p>}
@@ -99,11 +98,7 @@ export default function CompanyDetailPage() {
                     <Globe className="size-4 text-flag-blue" /> {company.website.replace(/^https?:\/\//, "")}
                   </a>
                 )}
-                {company.is_patriot && (
-                  <Badge tone="yellow" icon={<ShieldCheck className="size-3" />}>
-                    Patriota
-                  </Badge>
-                )}
+                {company.is_patriot && <PatriotBadge size="md" />}
                 {jobs.total > 0 && <Badge tone="green">Contratando</Badge>}
               </div>
             </div>

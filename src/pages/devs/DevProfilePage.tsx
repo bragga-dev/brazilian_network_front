@@ -1,4 +1,4 @@
-import { Award, Briefcase, Cpu, ExternalLink, GraduationCap, ShieldCheck } from "lucide-react";
+import { Award, Briefcase, Cpu, ExternalLink, GraduationCap } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -6,7 +6,8 @@ import { CurriculumAccess } from "@/components/devs/CurriculumAccess";
 import { CourseCard, EducationCard, ExperienceCard } from "@/components/profile/ProfileItems";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Panel } from "@/components/ui/Panel";
 import { ErrorState, Spinner } from "@/components/ui/States";
 import { TechBadge } from "@/components/ui/TechBadge";
@@ -98,19 +99,11 @@ export default function DevProfilePage() {
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="hero-beams pointer-events-none absolute inset-0 opacity-80" aria-hidden />
         <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-10 text-center sm:px-6 md:flex-row md:items-center md:gap-8 md:py-14 md:text-left">
-          <div className="size-32 shrink-0 rounded-full bg-linear-to-br from-flag-green via-flag-yellow to-flag-blue p-[3px] md:size-40">
-            <div className="size-full overflow-hidden rounded-full bg-ink">
-              {dev.photo_url ? <img src={dev.photo_url} alt={`Foto de ${dev.full_name}`} className="size-full object-cover" /> : <CompanyLogo name={dev.full_name} className="size-full rounded-full text-5xl" />}
-            </div>
-          </div>
+          <PatriotAvatar name={dev.full_name} url={dev.photo_url} alt={`Foto de ${dev.full_name}`} patriot={dev.is_patriot} labeled className="size-36 md:size-44" textClassName="text-5xl" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
               <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{dev.full_name}</h1>
-              {dev.is_patriot && (
-                <Badge tone="yellow">
-                  <ShieldCheck className="mr-1 size-3" /> Patriota
-                </Badge>
-              )}
+              {dev.is_patriot && <PatriotBadge size="md" />}
             </div>
             {dev.headline && <p className="mt-2 text-lg text-slate-300">{dev.headline}</p>}
             {dev.username && <p className="mt-1 text-sm text-slate-500">@{dev.username}</p>}

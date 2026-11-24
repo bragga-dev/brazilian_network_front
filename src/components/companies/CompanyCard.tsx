@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 
-import { ShieldCheck } from "lucide-react";
-
 import { Badge } from "@/components/ui/Badge";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import type { PublicCompanyListItem } from "@/types/company";
 
 export function CompanyCard({ company }: { company: PublicCompanyListItem }) {
@@ -15,7 +14,7 @@ export function CompanyCard({ company }: { company: PublicCompanyListItem }) {
       className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.05] to-white/[0.015] p-5 transition hover:border-flag-green/50 hover:from-white/[0.07]"
     >
       <div className="flex items-center gap-3">
-        <CompanyLogo name={company.full_name} url={company.photo_url} className="size-12 text-lg" />
+        <PatriotAvatar shape="square" name={company.full_name} url={company.photo_url} patriot={company.is_patriot} className="size-12" textClassName="text-lg" />
         <div className="min-w-0">
           <p className="truncate font-semibold text-white group-hover:text-flag-green">{company.full_name}</p>
           <p className="truncate text-xs text-slate-500">{location || "Local não informado"}</p>
@@ -26,11 +25,7 @@ export function CompanyCard({ company }: { company: PublicCompanyListItem }) {
         <Badge tone={company.open_jobs_count > 0 ? "green" : "neutral"}>
           {company.open_jobs_count} {company.open_jobs_count === 1 ? "vaga aberta" : "vagas abertas"}
         </Badge>
-        {company.is_patriot && (
-          <Badge tone="yellow" icon={<ShieldCheck className="size-3" />}>
-            Patriota
-          </Badge>
-        )}
+        {company.is_patriot && <PatriotBadge />}
       </div>
     </Link>
   );

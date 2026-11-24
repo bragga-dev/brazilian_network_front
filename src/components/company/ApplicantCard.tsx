@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
-import { Badge } from "@/components/ui/Badge";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Panel } from "@/components/ui/Panel";
 import type { ApplicationStatus } from "@/types/application";
 import type { ApplicantDev } from "@/types/manage";
@@ -22,22 +23,13 @@ interface Props {
   actions: ReactNode;
 }
 
-function Avatar({ name, url }: { name: string; url: string | null }) {
-  if (url) return <img src={url} alt="" loading="lazy" className="size-12 shrink-0 rounded-full border border-white/15 object-cover" />;
-  return (
-    <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-flag-green to-flag-blue font-bold text-black">
-      {name.trim().charAt(0).toUpperCase() || "?"}
-    </span>
-  );
-}
-
 /** Candidatura recebida: quem se candidatou, a que, a mensagem e as ações permitidas para o status atual. */
 export function ApplicantCard({ dev, opportunityTitle, opportunityTo, status, statusLabel, createdAt, coverLetter, extra, actions }: Props) {
   return (
     <Panel className="p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <Avatar name={dev.full_name} url={dev.photo_url} />
+          <PatriotAvatar name={dev.full_name} url={dev.photo_url} patriot={dev.is_patriot} className="size-12" />
           <div className="min-w-0">
             <Link to={`/devs/${dev.dev_id}`} className="block truncate font-semibold text-white hover:text-flag-green">
               {dev.full_name}
@@ -61,7 +53,7 @@ export function ApplicantCard({ dev, opportunityTitle, opportunityTo, status, st
       <p className="mt-3 whitespace-pre-line rounded-lg bg-white/[0.03] p-3 text-sm text-slate-300">{coverLetter}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        {dev.is_patriot && <Badge tone="yellow">Patriota</Badge>}
+        {dev.is_patriot && <PatriotBadge />}
         {dev.curriculum_url && (
           <a href={dev.curriculum_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-flag-green hover:underline">
             <FileText className="size-4" aria-hidden /> Currículo

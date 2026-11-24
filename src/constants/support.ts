@@ -1,0 +1,2 @@
+/** Doação livre por Pix: a página do Nubank deixa o apoiador escolher o valor e pagar por qualquer banco. */
+export const PIX_DONATION_URL = "https://nubank.com.br/cobrar/1dqzvo/6b05f3c6-3934-46b8-bf66-222a7a6d213e";
