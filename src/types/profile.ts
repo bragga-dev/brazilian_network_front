@@ -124,6 +124,8 @@ export interface PublicDev {
   site_url: string | null;
   is_patriot: boolean;
   accepts_patriot_discount: boolean;
+  /** Só vem para empresa/admin logados. `undefined` = o back não enviou; `null` = o dev não enviou currículo. */
+  curriculum_url?: string | null;
 }
 
 export interface PublicProfile extends ProfileSections {

@@ -21,8 +21,8 @@ export const membershipService = {
     }
   },
 
-  /** Dev precisa informar CPF/CNPJ; empresa usa o CNPJ do perfil. O selo só vem depois do pagamento. */
-  async subscribe(input: { plan_id: string; cpf_cnpj?: string }): Promise<Membership> {
+  /** Só o plano: a plataforma não coleta CPF/CNPJ. O selo só vem depois do pagamento. */
+  async subscribe(input: { plan_id: string }): Promise<Membership> {
     return (await api.post<Membership>("/memberships/", input)).data;
   },
 

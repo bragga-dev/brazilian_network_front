@@ -1,8 +1,10 @@
-import { Award, Briefcase, Cpu, ExternalLink, GraduationCap, MapPin, ShieldCheck, User } from "lucide-react";
+import { Award, Briefcase, ClipboardList, Cpu, ExternalLink, GraduationCap, MapPin, ShieldCheck, User } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { AccountSettings } from "@/components/account/AccountSettings";
 import { AddressesPanel } from "@/components/profile/AddressesPanel";
+import { ListingsPanel } from "@/components/company/ListingsPanel";
+import { ReceivedApplicationsPanel } from "@/components/company/ReceivedApplicationsPanel";
 import { CompanyDataForm } from "@/components/profile/CompanyDataForm";
 import { buildCompleteness, CompletenessCard } from "@/components/profile/CompletenessCard";
 import { CoursesPanel } from "@/components/profile/CoursesPanel";
@@ -38,6 +40,8 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
 
   const tabs: TabItem[] = [
     { id: "dados", label: "Dados", icon: User },
+    { id: "vagas-projetos", label: "Minhas vagas e projetos", icon: Briefcase },
+    { id: "candidaturas", label: "Candidaturas recebidas", icon: ClipboardList },
     { id: "enderecos", label: "Endereços", icon: MapPin },
     { id: "conta", label: "Conta e segurança", icon: ShieldCheck },
   ];
@@ -76,6 +80,8 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
             </div>
           </div>
         )}
+        {tab === "vagas-projetos" && <ListingsPanel embedded />}
+        {tab === "candidaturas" && <ReceivedApplicationsPanel embedded />}
         {tab === "enderecos" && <AddressesPanel owner="company" />}
         {tab === "conta" && <AccountSettings />}
       </div>

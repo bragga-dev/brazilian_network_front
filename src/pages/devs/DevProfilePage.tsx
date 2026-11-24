@@ -2,6 +2,7 @@ import { Award, Briefcase, Cpu, ExternalLink, GraduationCap, ShieldCheck } from 
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { CurriculumAccess } from "@/components/devs/CurriculumAccess";
 import { CourseCard, EducationCard, ExperienceCard } from "@/components/profile/ProfileItems";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
@@ -11,6 +12,7 @@ import { ErrorState, Spinner } from "@/components/ui/States";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { TechIcon } from "@/components/ui/TechIcon";
 import { PROFICIENCY_RANK } from "@/constants/profileOptions";
+import { useAuth } from "@/hooks/useAuth";
 import { usePublicProfile } from "@/hooks/useProfile";
 import type { DevTechnology } from "@/types/profile";
 import { cn } from "@/utils/cn";
@@ -65,6 +67,8 @@ function SkillBar({ item }: { item: DevTechnology }) {
 export default function DevProfilePage() {
   const { devId } = useParams();
   const { data, isLoading, isError, error, refetch } = usePublicProfile(devId);
+  const { me } = useAuth();
+  const canSeeCurriculum = me?.user.role === "company" || me?.user.role === "admin";
 
   if (isLoading) return <Spinner />;
   if (isError || !data) {
@@ -127,6 +131,12 @@ export default function DevProfilePage() {
                 ))}
               </div>
             )}
+            {canSeeCurriculum && dev.curriculum_url && (
+              <div className="mt-5">
+                <CurriculumAccess url={dev.curriculum_url} name={dev.full_name} />
+              </div>
+            )}
+            {canSeeCurriculum && dev.curriculum_url === null && <p className="mt-5 text-sm text-slate-500">Este dev ainda não enviou currículo.</p>}
           </div>
         </div>
       </section>

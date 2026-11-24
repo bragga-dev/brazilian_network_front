@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect, useId, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/utils/cn";
 
@@ -11,7 +12,7 @@ interface Props {
   wide?: boolean;
 }
 
-/** Diálogo modal acessível: Esc fecha, clique fora fecha, trava o scroll do fundo. */
+/** Diálogo modal acessível: Esc fecha, clique fora fecha, trava o scroll do fundo. Renderiza no <body> para escapar de pais com backdrop-filter/transform (que prendem o `fixed`). */
 export function Modal({ open, onClose, title, children, wide }: Props) {
   const titleId = useId();
 
@@ -29,7 +30,7 @@ export function Modal({ open, onClose, title, children, wide }: Props) {
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={onClose}>
       <div
         role="dialog"
@@ -51,6 +52,7 @@ export function Modal({ open, onClose, title, children, wide }: Props) {
         </div>
         <div className="overflow-y-auto px-6 py-5">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
