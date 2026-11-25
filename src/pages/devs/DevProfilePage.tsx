@@ -98,6 +98,7 @@ export default function DevProfilePage() {
     <>
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="hero-beams pointer-events-none absolute inset-0 opacity-80" aria-hidden />
+        {dev.is_patriot && <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_90%_at_15%_0%,rgba(255,230,0,0.12),transparent)]" aria-hidden />}
         <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-10 text-center sm:px-6 md:flex-row md:items-center md:gap-8 md:py-14 md:text-left">
           <PatriotAvatar name={dev.full_name} url={dev.photo_url} alt={`Foto de ${dev.full_name}`} patriot={dev.is_patriot} labeled className="size-36 md:size-44" textClassName="text-5xl" />
           <div className="min-w-0 flex-1">
@@ -107,8 +108,9 @@ export default function DevProfilePage() {
             </div>
             {dev.headline && <p className="mt-2 text-lg text-slate-300">{dev.headline}</p>}
             {dev.username && <p className="mt-1 text-sm text-slate-500">@{dev.username}</p>}
-            {topTechs.length > 0 && (
+            {(topTechs.length > 0 || dev.accepts_patriot_discount) && (
               <div className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start">
+                {dev.accepts_patriot_discount && <Badge tone="yellow">Aceita desconto patriota</Badge>}
                 {topTechs.map((item) => (
                   <TechBadge key={item.dev_technology_id} technology={item.technology} />
                 ))}
@@ -146,7 +148,6 @@ export default function DevProfilePage() {
           <div className="space-y-5">
             <Section title="Sobre mim">
               {dev.bio ? <p className="whitespace-pre-line text-slate-300">{dev.bio}</p> : <p className="text-sm text-slate-500">Este dev ainda não escreveu uma apresentação.</p>}
-              {dev.accepts_patriot_discount && <p className="mt-3 text-sm text-flag-yellow">Aceita desconto patriota.</p>}
             </Section>
             {experiences.length > 0 && (
               <Section title="Experiência profissional">
@@ -168,7 +169,7 @@ export default function DevProfilePage() {
             )}
           </div>
 
-          <div className="space-y-5 lg:self-start">
+          <div className="space-y-5 lg:sticky lg:top-24 lg:self-start">
             {technologies.length > 0 && (
               <Section title="Habilidades">
                 <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">

@@ -2,7 +2,8 @@ import { Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Icon } from "@/components/ui/Icon";
 import { LockedNotice } from "@/components/ui/LockedNotice";
 import { TechBadge } from "@/components/ui/TechBadge";
@@ -16,14 +17,17 @@ export function ProjectCard({ project }: { project: Project }) {
   return (
     <article className="group relative rounded-2xl border border-white/10 bg-linear-to-b from-white/[0.05] to-white/[0.015] p-5 transition hover:border-flag-green/50 hover:from-white/[0.07]">
       <div className="flex items-start gap-4">
-        <CompanyLogo name={project.company.full_name} url={project.company.photo_url} className="size-12 text-lg" />
+        <PatriotAvatar shape="square" name={project.company.full_name} url={project.company.photo_url} patriot={project.company.is_patriot} className="size-12" textClassName="text-lg" />
         <div className="min-w-0 flex-1">
           <Link to={`/projetos/${project.project_id}`} className="block truncate text-lg font-semibold text-white after:absolute after:inset-0 group-hover:text-flag-green">
             {project.title}
           </Link>
-          <Link to={`/empresas/${project.company.company_id}`} className="relative z-10 mt-0.5 inline-block text-sm text-slate-400 hover:text-flag-green">
-            {project.company.full_name}
-          </Link>
+          <div className="relative z-10 mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Link to={`/empresas/${project.company.company_id}`} className="text-sm text-slate-400 hover:text-flag-green">
+              {project.company.full_name}
+            </Link>
+            {project.company.is_patriot && <PatriotBadge />}
+          </div>
         </div>
         <span className="shrink-0 text-xs text-slate-500">{formatRelative(project.published_at)}</span>
       </div>

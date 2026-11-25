@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
 import { Panel } from "@/components/ui/Panel";
 import { REGION_COLORS, REGION_LABELS, REGION_ORDER } from "@/constants/regions";
 import type { RegionShare } from "@/hooks/useHomeData";
@@ -95,7 +95,7 @@ export function RegionsPanel({ regions, companyCount, loading }: Props) {
                     {detail.companies.slice(0, 4).map((company) => (
                       <li key={company.company_id}>
                         <Link to={`/empresas/${company.company_id}`} className="group flex items-center gap-3 py-2.5">
-                          <CompanyLogo name={company.full_name} url={company.photo_url} className="size-10 text-base" />
+                          <PatriotAvatar shape="square" name={company.full_name} url={company.photo_url} patriot={company.is_patriot} className="size-10" textClassName="text-base" />
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-sm font-medium text-white group-hover:text-flag-green">{company.full_name}</span>
                             <span className="block truncate text-xs text-slate-500">{[company.city, company.state].filter(Boolean).join(" - ") || "Local não informado"}</span>

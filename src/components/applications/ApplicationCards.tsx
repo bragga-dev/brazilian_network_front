@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
 import { Button } from "@/components/ui/Button";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Panel } from "@/components/ui/Panel";
 import type { ApplicationStatus, JobApplication, ProjectApplication } from "@/types/application";
 import { formatDate, formatMoney } from "@/utils/format";
@@ -35,14 +36,17 @@ function Frame<T>({ item, status, statusLabel, title, to, company, createdAt, up
   return (
     <Panel className="p-5">
       <div className="flex items-start gap-4">
-        <CompanyLogo name={company.full_name} url={company.photo_url} className="size-12 text-lg" />
+        <PatriotAvatar shape="square" name={company.full_name} url={company.photo_url} patriot={company.is_patriot} className="size-12" textClassName="text-lg" />
         <div className="min-w-0 flex-1">
           <Link to={to} className="block truncate text-lg font-semibold text-white hover:text-flag-green">
             {title}
           </Link>
-          <Link to={`/empresas/${company.company_id}`} className="mt-0.5 inline-block text-sm text-slate-400 hover:text-flag-green">
-            {company.full_name}
-          </Link>
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Link to={`/empresas/${company.company_id}`} className="text-sm text-slate-400 hover:text-flag-green">
+              {company.full_name}
+            </Link>
+            {company.is_patriot && <PatriotBadge />}
+          </div>
         </div>
         <ApplicationStatusBadge status={status} label={statusLabel} />
       </div>

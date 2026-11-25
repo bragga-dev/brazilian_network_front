@@ -2,7 +2,8 @@ import { ArrowRight, Briefcase } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/Badge";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Icon } from "@/components/ui/Icon";
 import { Panel } from "@/components/ui/Panel";
 import { TechIcon } from "@/components/ui/TechIcon";
@@ -14,11 +15,14 @@ function JobRow({ job }: { job: HomeJob }) {
   return (
     <li>
       <Link to={`/vagas/${job.job_id}`} className="group flex items-center gap-4 py-4 transition hover:bg-white/[0.03] sm:-mx-3 sm:rounded-xl sm:px-3">
-        <CompanyLogo name={job.company.full_name} url={job.company.photo_url} className="size-14 text-xl" />
+        <PatriotAvatar shape="square" name={job.company.full_name} url={job.company.photo_url} patriot={job.company.is_patriot} className="size-14" textClassName="text-xl" />
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold text-white group-hover:text-flag-green">{job.title}</p>
-          <p className="truncate text-sm text-slate-400">
-            {job.company.full_name} · {formatLocation(job)}
+          <p className="flex items-center gap-2 text-sm text-slate-400">
+            <span className="truncate">
+              {job.company.full_name} · {formatLocation(job)}
+            </span>
+            {job.company.is_patriot && <PatriotBadge className="shrink-0" />}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {job.technologies.slice(0, 3).map((name) => (

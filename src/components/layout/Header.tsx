@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
 import { buttonClasses } from "@/components/ui/Button";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { useAuth } from "@/hooks/useAuth";
 import type { Me } from "@/types/auth";
 import { cn } from "@/utils/cn";
@@ -25,12 +27,7 @@ function displayName(me: Me): string {
 
 function Avatar({ me }: { me: Me }) {
   const url = me.dev?.photo_url ?? me.company?.photo_url ?? me.admin?.photo_url;
-  if (url) return <img src={url} alt="" className="size-10 rounded-full border border-white/15 object-cover" />;
-  return (
-    <span className="flex size-10 items-center justify-center rounded-full bg-linear-to-br from-flag-green to-flag-blue font-bold text-black">
-      {displayName(me).charAt(0).toUpperCase()}
-    </span>
-  );
+  return <PatriotAvatar name={displayName(me)} url={url} patriot={Boolean(me.user.is_patriot)} className="size-10" textClassName="text-base" />;
 }
 
 function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
@@ -67,6 +64,7 @@ function UserMenu({ me, onLogout }: { me: Me; onLogout: () => void }) {
           <div className="border-b border-white/10 px-3 py-2">
             <p className="truncate text-sm font-medium text-white">{displayName(me)}</p>
             <p className="truncate text-xs text-slate-500">{me.user.email}</p>
+            {me.user.is_patriot && <PatriotBadge className="mt-2" />}
           </div>
           {me.user.role !== "admin" && (
             <Link

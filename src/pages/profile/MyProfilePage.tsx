@@ -14,6 +14,7 @@ import { EducationPanel } from "@/components/profile/EducationPanel";
 import { ExperiencePanel } from "@/components/profile/ExperiencePanel";
 import { TechnologiesPanel } from "@/components/profile/TechnologiesPanel";
 import { buttonClasses } from "@/components/ui/Button";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { PhotoUploader } from "@/components/ui/PhotoUploader";
 import { Panel } from "@/components/ui/Panel";
 import { ErrorState, Spinner } from "@/components/ui/States";
@@ -26,6 +27,8 @@ import { getErrorMessage } from "@/utils/errors";
 import { COMPANY_REQUIRED, companyMissingFields } from "@/utils/profileCompletion";
 
 function CompanyProfileView({ company, email }: { company: CompanyProfile; email: string }) {
+  const { me } = useAuth();
+  const patriot = Boolean(me?.user.is_patriot);
   const [params, setParams] = useSearchParams();
   const tab = params.get("aba") ?? "dados";
   const upload = useIdentityMutation(accountService.uploadCompanyPhoto);
@@ -48,12 +51,15 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
 
   return (
     <>
-      <Panel className="flex flex-col gap-6 p-5 sm:flex-row sm:items-center sm:p-6">
-        <PhotoUploader name={company.full_name ?? email} url={company.photo_url} rounded="2xl" onUpload={upload.mutateAsync} onRemove={() => remove.mutateAsync()} />
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-bold text-white sm:text-3xl">{company.full_name ?? "Sua empresa"}</h1>
-          <p className="mt-1 text-slate-400">{email}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
+      <Panel className="flex flex-col items-center gap-6 p-5 sm:flex-row sm:p-6">
+        <PhotoUploader name={company.full_name ?? email} url={company.photo_url} rounded="2xl" patriot={patriot} onUpload={upload.mutateAsync} onRemove={() => remove.mutateAsync()} />
+        <div className="min-w-0 flex-1 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <h1 className="min-w-0 truncate text-2xl font-bold text-white sm:text-3xl">{company.full_name ?? "Sua empresa"}</h1>
+            {patriot && <PatriotBadge size="md" />}
+          </div>
+          <p className="mt-1 truncate text-slate-400">{email}</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
             <Link to={`/empresas/${company.company_id}`} className={buttonClasses("secondary", "sm")}>
               <ExternalLink className="size-4" /> Ver perfil público
             </Link>
@@ -90,6 +96,8 @@ function CompanyProfileView({ company, email }: { company: CompanyProfile; email
 }
 
 function DevProfileView({ email, requirements }: { email: string; requirements: ProfileCompletion | null }) {
+  const { me } = useAuth();
+  const patriot = Boolean(me?.user.is_patriot);
   const [params, setParams] = useSearchParams();
   const tab = params.get("aba") ?? "dados";
   const { data, isLoading, isError, error, refetch } = useMyProfile();
@@ -126,13 +134,16 @@ function DevProfileView({ email, requirements }: { email: string; requirements: 
 
   return (
     <>
-      <Panel className="flex flex-col gap-6 p-5 sm:flex-row sm:items-center sm:p-6">
-        <PhotoUploader name={fullName} url={dev.photo_url} onUpload={upload.mutateAsync} onRemove={() => remove.mutateAsync()} />
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-bold text-white sm:text-3xl">{fullName}</h1>
+      <Panel className="flex flex-col items-center gap-6 p-5 sm:flex-row sm:p-6">
+        <PhotoUploader name={fullName} url={dev.photo_url} patriot={patriot} onUpload={upload.mutateAsync} onRemove={() => remove.mutateAsync()} />
+        <div className="min-w-0 flex-1 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <h1 className="min-w-0 truncate text-2xl font-bold text-white sm:text-3xl">{fullName}</h1>
+            {patriot && <PatriotBadge size="md" />}
+          </div>
           <p className="mt-1 text-slate-300">{dev.headline || "Adicione um título profissional"}</p>
-          <p className="mt-1 text-sm text-slate-500">{email}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <p className="mt-1 truncate text-sm text-slate-500">{email}</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
             <Link to={`/devs/${dev.dev_id}`} className={buttonClasses("secondary", "sm")}>
               <ExternalLink className="size-4" /> Ver perfil público
             </Link>

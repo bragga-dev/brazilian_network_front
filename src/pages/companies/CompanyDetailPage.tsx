@@ -78,6 +78,7 @@ export default function CompanyDetailPage() {
     <>
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="hero-beams pointer-events-none absolute inset-0 opacity-80" aria-hidden />
+        {company.is_patriot && <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_90%_at_15%_0%,rgba(255,230,0,0.12),transparent)]" aria-hidden />}
         <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-8 sm:px-6">
           <Link to="/empresas" className="inline-flex rounded-full border border-white/15 bg-black/40 px-4 py-1.5 text-sm text-slate-300 backdrop-blur hover:text-white">
             ← Voltar para empresas

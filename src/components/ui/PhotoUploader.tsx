@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn";
 import { getErrorMessage } from "@/utils/errors";
 
 import { CompanyLogo } from "./CompanyLogo";
+import { PatriotAvatar } from "./PatriotAvatar";
 
 const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 const MAX_MB = 5; // mesmo limite do backend
@@ -13,13 +14,15 @@ interface Props {
   name: string;
   url: string | null;
   rounded?: "full" | "2xl";
+  /** Apoiador: troca o quadro neutro pelo selo de patriota. */
+  patriot?: boolean;
   className?: string;
   onUpload: (file: File) => Promise<unknown>;
   onRemove: () => Promise<unknown>;
 }
 
 /** Foto/logo com botão de trocar e remover. Valida tipo e tamanho antes de enviar. */
-export function PhotoUploader({ name, url, rounded = "full", className, onUpload, onRemove }: Props) {
+export function PhotoUploader({ name, url, rounded = "full", patriot = false, className, onUpload, onRemove }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,21 +50,24 @@ export function PhotoUploader({ name, url, rounded = "full", className, onUpload
 
   return (
     <div className={cn("flex flex-col items-center gap-3", className)}>
-      <div className={cn("group relative size-28 shrink-0 p-[3px]", shape, "bg-linear-to-br from-flag-green via-flag-yellow to-flag-blue")}>
-        <div className={cn("size-full overflow-hidden bg-ink", shape, busy && "opacity-50")}>
-          {url ? (
-            <img src={url} alt={`Foto de ${name}`} className="size-full object-cover" />
-          ) : (
-            <CompanyLogo name={name} className={cn("size-full text-4xl", shape)} />
-          )}
-        </div>
+      <div className={cn("group relative size-32 shrink-0", busy && "opacity-60")}>
+        {patriot ? (
+          <PatriotAvatar name={name} url={url} alt={`Foto de ${name}`} patriot shape={rounded === "full" ? "circle" : "square"} labeled={rounded === "full"} className="size-full" textClassName="text-4xl" />
+        ) : (
+          <div className={cn("size-full bg-white/15 p-[2px]", shape)}>
+            <div className={cn("size-full overflow-hidden bg-ink", shape)}>
+              {url ? <img src={url} alt={`Foto de ${name}`} className="size-full object-cover" /> : <CompanyLogo name={name} className={cn("size-full text-4xl", shape)} />}
+            </div>
+          </div>
+        )}
         <button
           type="button"
           disabled={busy}
           onClick={() => input.current?.click()}
           aria-label="Alterar foto"
           className={cn(
-            "absolute inset-[3px] flex items-center justify-center bg-black/55 text-white opacity-0 transition focus-visible:opacity-100 group-hover:opacity-100",
+            "absolute flex items-center justify-center bg-black/55 text-white opacity-0 transition focus-visible:opacity-100 group-hover:opacity-100",
+            patriot ? (rounded === "full" ? "inset-[6%]" : "inset-[2.5px]") : "inset-[2px]",
             shape,
           )}
         >

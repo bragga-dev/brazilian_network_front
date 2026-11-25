@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { ApplyAction } from "@/components/applications/ApplyAction";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
-import { CompanyLogo } from "@/components/ui/CompanyLogo";
+import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
+import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Icon } from "@/components/ui/Icon";
 import { LockedNotice } from "@/components/ui/LockedNotice";
 import { Panel, SectionLabel } from "@/components/ui/Panel";
@@ -120,9 +121,17 @@ export default function JobDetailPage() {
 
           <Panel className="p-5">
             <SectionLabel tone="blue">Empresa</SectionLabel>
-            <Link to={`/empresas/${job.company.company_id}`} className="mt-4 flex items-center gap-3 hover:text-flag-yellow">
-              <CompanyLogo name={job.company.full_name} url={job.company.photo_url} className="size-12 text-lg" />
-              <span className="font-medium text-white">{job.company.full_name}</span>
+            <Link to={`/empresas/${job.company.company_id}`} className="group -mx-2 mt-3 flex items-center gap-3 rounded-xl p-2 transition hover:bg-white/[0.04]">
+              <PatriotAvatar shape="square" name={job.company.full_name} url={job.company.photo_url} patriot={job.company.is_patriot} className="size-14" textClassName="text-xl" />
+              <span className="min-w-0">
+                <span className="block truncate font-medium text-white group-hover:text-flag-yellow">{job.company.full_name}</span>
+                {job.company.is_patriot && (
+                  <span className="mt-1 flex">
+                    <PatriotBadge />
+                  </span>
+                )}
+                <span className="mt-1 block text-xs text-slate-500">Ver perfil da empresa →</span>
+              </span>
             </Link>
           </Panel>
         </aside>
