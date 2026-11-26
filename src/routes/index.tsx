@@ -43,7 +43,11 @@ export const router = createBrowserRouter([
       },
       {
         element: <ProtectedRoute roles={["dev", "company"]} />,
-        children: [{ path: "perfil", lazy: page(() => import("@/pages/profile/MyProfilePage")) }],
+        children: [
+          { path: "perfil", lazy: page(() => import("@/pages/profile/MyProfilePage")) },
+          { path: "mensagens", lazy: page(() => import("@/pages/messages/MessagesPage")) },
+          { path: "mensagens/:conversationId", lazy: page(() => import("@/pages/messages/MessagesPage")) },
+        ],
       },
       {
         element: <ProtectedRoute roles={["dev"]} />,

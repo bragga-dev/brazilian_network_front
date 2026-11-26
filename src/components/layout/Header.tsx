@@ -2,6 +2,7 @@ import { Briefcase, Building2, ChevronDown, ClipboardList, FolderKanban, House, 
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
+import { MessagesLink } from "@/components/chat/MessagesLink";
 import { buttonClasses } from "@/components/ui/Button";
 import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
 import { PatriotBadge } from "@/components/ui/PatriotBadge";
@@ -181,7 +182,12 @@ export function Header() {
               <LogIn className="size-4" /> Entrar
             </Link>
           )}
-          {status === "authenticated" && me && <UserMenu me={me} onLogout={() => void logout()} />}
+          {status === "authenticated" && me && (
+            <>
+              <MessagesLink />
+              <UserMenu me={me} onLogout={() => void logout()} />
+            </>
+          )}
 
           <button
             onClick={() => setMobileOpen((value) => !value)}

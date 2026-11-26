@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
+import { StartChatButton } from "@/components/chat/StartChatButton";
 import { Button } from "@/components/ui/Button";
 import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
 import { PatriotBadge } from "@/components/ui/PatriotBadge";
 import { Panel } from "@/components/ui/Panel";
-import type { ApplicationStatus, JobApplication, ProjectApplication } from "@/types/application";
+import type { ApplicationKind, ApplicationStatus, JobApplication, ProjectApplication } from "@/types/application";
+import { canStartChat } from "@/utils/chat";
 import { formatDate, formatMoney } from "@/utils/format";
 
 export interface ApplicationHandlers<T> {
@@ -22,6 +24,8 @@ const canDelete = (status: ApplicationStatus) => status === "pending" || status 
 
 interface FrameProps<T> extends ApplicationHandlers<T> {
   item: T;
+  kind: ApplicationKind;
+  applicationId: string;
   status: ApplicationStatus;
   statusLabel: string;
   title: string;
@@ -32,7 +36,7 @@ interface FrameProps<T> extends ApplicationHandlers<T> {
   children?: ReactNode;
 }
 
-function Frame<T>({ item, status, statusLabel, title, to, company, createdAt, updatedAt, children, onEdit, onWithdraw, onDelete }: FrameProps<T>) {
+function Frame<T>({ item, kind, applicationId, status, statusLabel, title, to, company, createdAt, updatedAt, children, onEdit, onWithdraw, onDelete }: FrameProps<T>) {
   return (
     <Panel className="p-5">
       <div className="flex items-start gap-4">
@@ -59,6 +63,7 @@ function Frame<T>({ item, status, statusLabel, title, to, company, createdAt, up
           {updatedAt !== createdAt && ` · atualizada em ${formatDate(updatedAt)}`}
         </p>
         <div className="flex flex-wrap gap-2">
+          {canStartChat(status) && <StartChatButton kind={kind} applicationId={applicationId} />}
           {canEdit(status) && (
             <Button variant="secondary" size="sm" onClick={() => onEdit(item)}>
               Editar
@@ -84,6 +89,8 @@ export function JobApplicationCard({ item, ...handlers }: { item: JobApplication
   return (
     <Frame
       item={item}
+      kind="job"
+      applicationId={item.send_job_application_id}
       status={item.status}
       statusLabel={item.status_label}
       title={item.job_title}
@@ -102,6 +109,8 @@ export function ProjectApplicationCard({ item, ...handlers }: { item: ProjectApp
   return (
     <Frame
       item={item}
+      kind="project"
+      applicationId={item.send_project_application_id}
       status={item.status}
       statusLabel={item.status_label}
       title={item.project_title}
