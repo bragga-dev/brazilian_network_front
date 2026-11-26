@@ -21,9 +21,14 @@ export const membershipService = {
     }
   },
 
-  /** Só o plano: a plataforma não coleta CPF/CNPJ. O selo só vem depois do pagamento. */
+  /** Só o plano: nenhum dado pessoal é pedido. A resposta já traz o Pix; o selo só vem depois do pagamento. */
   async subscribe(input: { plan_id: string }): Promise<Membership> {
     return (await api.post<Membership>("/memberships/", input)).data;
+  },
+
+  /** Novo Pix para pagar o primeiro mês (se o anterior venceu) ou renovar o apoio. */
+  async newPix(): Promise<Membership> {
+    return (await api.post<Membership>("/memberships/mine/pix")).data;
   },
 
   async cancel(): Promise<Membership> {

@@ -12,7 +12,7 @@ import type { MembershipPlan } from "@/types/membership";
 import { getErrorMessage } from "@/utils/errors";
 import { formatMoney } from "@/utils/format";
 
-/** Plano de apoio. Nenhum documento é pedido aqui: o que o meio de pagamento exigir é preenchido na página de pagamento. */
+/** Plano de apoio, pago por Pix. Nenhum dado pessoal é pedido: ao confirmar, o Pix aparece no painel do apoio. */
 export function PlanCard({ plan, canSubscribe }: { plan: MembershipPlan; canSubscribe: boolean }) {
   const { status } = useAuth();
   const subscribe = useSubscribe();
@@ -47,7 +47,7 @@ export function PlanCard({ plan, canSubscribe }: { plan: MembershipPlan; canSubs
           <Check className="size-4 text-flag-green" aria-hidden /> Destaque na lista de apoiadores
         </li>
         <li className="flex items-center gap-2">
-          <Check className="size-4 text-flag-green" aria-hidden /> Cancele quando quiser
+          <Check className="size-4 text-flag-green" aria-hidden /> Sem fidelidade, renove quando quiser
         </li>
       </ul>
 
@@ -67,7 +67,7 @@ export function PlanCard({ plan, canSubscribe }: { plan: MembershipPlan; canSubs
       <Modal open={open} onClose={() => setOpen(false)} title={`Apoiar: ${plan.name}`}>
         <div className="space-y-4">
           {subscribe.isError && <FormMessage tone="error">{getErrorMessage(subscribe.error)}</FormMessage>}
-          <p className="text-sm text-slate-400">Você vai receber um link para pagar por Pix, boleto ou cartão. O selo de patriota é concedido quando o pagamento for confirmado.</p>
+          <p className="text-sm text-slate-400">Ao confirmar, geramos um Pix de {formatMoney(plan.value)} para o primeiro mês. O selo de patriota é concedido quando o pagamento for confirmado.</p>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
               Voltar
