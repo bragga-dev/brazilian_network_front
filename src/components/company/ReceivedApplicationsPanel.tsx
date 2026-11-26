@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { ApplicantCard } from "@/components/company/ApplicantCard";
+import { StartChatButton } from "@/components/chat/StartChatButton";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Field, Select } from "@/components/ui/Field";
@@ -12,6 +13,7 @@ import { Tabs, type TabItem } from "@/components/ui/Tabs";
 import { useManagedJobs, useManagedProjects, useReceivedJobs, useReceivedMutations, useReceivedProjects } from "@/hooks/useManage";
 import type { ApplicationStatus } from "@/types/application";
 import type { ReceivedJobApplication, ReceivedProjectApplication } from "@/types/manage";
+import { canStartChat } from "@/utils/chat";
 import { getErrorMessage } from "@/utils/errors";
 import { formatMoney } from "@/utils/format";
 
@@ -48,7 +50,8 @@ function Decisions({ kind, row, name, onDone }: { kind: "job" | "project"; row: 
   const [confirm, setConfirm] = useState<Exclude<Decision, "review"> | null>(null);
   const busy = mutations.review.isPending || mutations.accept.isPending || mutations.reject.isPending;
   const open = row.status === "pending" || row.status === "in_review";
-  if (!open) return null;
+  const canChat = canStartChat(row.status);
+  if (!open && !canChat) return null;
 
   const run = async (decision: Decision) => {
     onDone(null);
@@ -63,17 +66,22 @@ function Decisions({ kind, row, name, onDone }: { kind: "job" | "project"; row: 
 
   return (
     <>
+      {canChat && <StartChatButton kind={kind} applicationId={row.id} />}
       {row.status === "pending" && (
         <Button size="sm" variant="secondary" disabled={busy} onClick={() => void run("review")}>
           Marcar em análise
         </Button>
       )}
-      <Button size="sm" variant="primary" disabled={busy} onClick={() => setConfirm("accept")}>
-        Aprovar
-      </Button>
-      <Button size="sm" variant="danger" disabled={busy} onClick={() => setConfirm("reject")}>
-        Recusar
-      </Button>
+      {open && (
+        <>
+          <Button size="sm" variant="primary" disabled={busy} onClick={() => setConfirm("accept")}>
+            Aprovar
+          </Button>
+          <Button size="sm" variant="danger" disabled={busy} onClick={() => setConfirm("reject")}>
+            Recusar
+          </Button>
+        </>
+      )}
       <ConfirmDialog
         open={confirm !== null}
         title={confirm ? CONFIRMS[confirm].title : ""}

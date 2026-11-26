@@ -4,6 +4,9 @@ export interface ChatParticipant {
   /** Id do perfil (dev_id ou company_id), não do usuário. */
   id: string;
   name: string;
+  /** Só vem se o back já mandar; sem ele o front busca a foto no perfil público (useChatPeer). */
+  photo_url?: string | null;
+  is_patriot?: boolean;
 }
 
 export interface Conversation {

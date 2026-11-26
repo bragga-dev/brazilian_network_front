@@ -58,7 +58,7 @@ export function MessageComposer({ conversationId }: { conversationId: string }) 
   const error = fileError ?? (send.isError ? getErrorMessage(send.error) : null);
 
   return (
-    <div className="border-t border-white/10 p-3 sm:p-4">
+    <div className="border-t border-white/10 px-3 py-3 sm:px-5">
       {files.length > 0 && (
         <ul className="mb-2 flex flex-wrap gap-2" aria-label="Anexos selecionados">
           {files.map((file, index) => (
@@ -100,16 +100,16 @@ export function MessageComposer({ conversationId }: { conversationId: string }) 
           value={content}
           rows={1}
           maxLength={MAX_MESSAGE_LENGTH}
-          placeholder="Escreva uma mensagem"
+          placeholder="Digite uma mensagem..."
           aria-label="Mensagem"
           onChange={(event) => {
             setContent(event.target.value);
             resize();
           }}
           onKeyDown={onKeyDown}
-          className="max-h-36 min-h-11 flex-1 resize-none rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-flag-green/60 focus:outline-none"
+          className="max-h-36 min-h-11 flex-1 resize-none rounded-3xl border border-white/10 bg-white/[0.06] px-5 py-2.5 text-[15px] text-white placeholder:text-slate-500 focus:border-flag-green/60 focus:outline-none"
         />
-        <Button onClick={submit} disabled={!canSend} aria-label="Enviar mensagem" className="size-11 shrink-0 !p-0">
+        <Button onClick={submit} disabled={!canSend} aria-label="Enviar mensagem" className="size-11 shrink-0 !rounded-full !p-0">
           <SendHorizontal className="size-5" aria-hidden />
         </Button>
       </div>

@@ -2,6 +2,7 @@ import { Award, Briefcase, Cpu, ExternalLink, GraduationCap } from "lucide-react
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { MessageDevButton } from "@/components/chat/MessageDevButton";
 import { CurriculumAccess } from "@/components/devs/CurriculumAccess";
 import { CourseCard, EducationCard, ExperienceCard } from "@/components/profile/ProfileItems";
 import { Badge } from "@/components/ui/Badge";
@@ -117,6 +118,9 @@ export default function DevProfilePage() {
                 {technologies.length > topTechs.length && <Badge>+{technologies.length - topTechs.length}</Badge>}
               </div>
             )}
+            <div className="mt-5">
+              <MessageDevButton devId={dev.dev_id} />
+            </div>
             {links.length > 0 && (
               <div className="mt-5 flex flex-wrap justify-center gap-2 md:justify-start">
                 {links.map((item) => (

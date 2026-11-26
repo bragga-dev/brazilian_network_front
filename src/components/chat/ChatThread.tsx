@@ -3,14 +3,15 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
-import { MessageBubble } from "@/components/chat/MessageBubble";
+import { ChatAvatar } from "@/components/chat/ChatAvatar";
+import { MessageBubble, type ClusterPosition } from "@/components/chat/MessageBubble";
 import { MessageComposer } from "@/components/chat/MessageComposer";
-import { PatriotAvatar } from "@/components/ui/PatriotAvatar";
 import { ErrorState, Spinner } from "@/components/ui/States";
 import { useMarkRead, useMessages } from "@/hooks/useChat";
 import { useChatSocket } from "@/hooks/useChatSocket";
-import type { Conversation } from "@/types/chat";
+import type { ChatMessage, Conversation } from "@/types/chat";
 import { STATUS_LABEL, groupByDay } from "@/utils/chat";
+import { cn } from "@/utils/cn";
 import { getErrorMessage } from "@/utils/errors";
 
 interface Props {
@@ -21,6 +22,17 @@ interface Props {
 }
 
 const NEAR_BOTTOM_PX = 96;
+
+/** Primeira/meio/última de uma sequência de mensagens seguidas da mesma pessoa. */
+function positionOf(messages: ChatMessage[], index: number): ClusterPosition {
+  const sender = messages[index].sender_id;
+  const samePrev = messages[index - 1]?.sender_id === sender;
+  const sameNext = messages[index + 1]?.sender_id === sender;
+  if (samePrev && sameNext) return "middle";
+  if (samePrev) return "last";
+  if (sameNext) return "first";
+  return "single";
+}
 
 export function ChatThread({ conversation, myUserId, role }: Props) {
   const { conversation_id: conversationId } = conversation;
@@ -52,11 +64,11 @@ export function ChatThread({ conversation, myUserId, role }: Props) {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <header className="flex items-center gap-3 border-b border-white/10 px-3 py-3 sm:px-4">
+      <header className="flex items-center gap-3 border-b border-white/10 px-3 py-3 sm:px-5">
         <Link to="/mensagens" aria-label="Voltar para as conversas" className="rounded-full p-2 text-slate-300 hover:bg-white/5 hover:text-white lg:hidden">
           <ArrowLeft className="size-5" />
         </Link>
-        <PatriotAvatar name={other.name} shape={role === "dev" ? "square" : "circle"} className="size-10" textClassName="text-base" />
+        <ChatAvatar participant={other} viewerRole={role} className="size-11" textClassName="text-lg" />
         <div className="min-w-0 flex-1">
           <Link to={otherTo} className="block truncate font-semibold text-white hover:text-flag-green">
             {other.name}
@@ -80,17 +92,34 @@ export function ChatThread({ conversation, myUserId, role }: Props) {
           const element = event.currentTarget;
           stickToBottom.current = element.scrollHeight - element.scrollTop - element.clientHeight < NEAR_BOTTOM_PX;
         }}
-        className="min-h-0 flex-1 space-y-5 overflow-y-auto px-3 py-4 sm:px-5"
+        className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6"
       >
         {isLoading && <Spinner label="Carregando mensagens" />}
         {isError && <ErrorState message={getErrorMessage(error)} onRetry={() => void refetch()} />}
-        {messages && messages.length === 0 && <p className="py-16 text-center text-sm text-slate-500">Nenhuma mensagem ainda. Comece a conversa.</p>}
+        {messages && messages.length === 0 && (
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+            <ChatAvatar participant={other} viewerRole={role} className="size-24" textClassName="text-4xl" />
+            <p className="font-semibold text-white">{other.name}</p>
+            <p className="text-sm text-slate-500">Nenhuma mensagem ainda. Diga um oi para começar a conversa.</p>
+          </div>
+        )}
         {groups.map((group) => (
-          <section key={group.day} className="space-y-2" aria-label={group.label}>
-            <p className="sticky top-0 z-10 mx-auto w-fit rounded-full bg-ink/90 px-3 py-0.5 text-[11px] font-medium text-slate-400">{group.label}</p>
-            {group.messages.map((message) => (
-              <MessageBubble key={message.message_id} message={message} mine={message.sender_id === myUserId} />
-            ))}
+          <section key={group.day} aria-label={group.label}>
+            <p className="sticky top-0 z-10 mx-auto my-3 w-fit rounded-full border border-white/10 bg-ink/90 px-3.5 py-1 text-[11px] font-medium text-slate-400">{group.label}</p>
+            {group.messages.map((message, index) => {
+              const position = positionOf(group.messages, index);
+              const startsCluster = position === "single" || position === "first";
+              return (
+                <div key={message.message_id} className={cn(index === 0 ? "" : startsCluster ? "mt-3" : "mt-0.5")}>
+                  <MessageBubble
+                    message={message}
+                    mine={message.sender_id === myUserId}
+                    position={position}
+                    avatar={<ChatAvatar participant={other} viewerRole={role} className="size-8" textClassName="text-xs" />}
+                  />
+                </div>
+              );
+            })}
           </section>
         ))}
       </div>
