@@ -14,6 +14,9 @@ export function useMyJobApplications(filters: ApplicationFilters) {
     queryKey: applicationKeys.list("job", filters),
     queryFn: () => applicationService.jobs.list(filters),
     placeholderData: keepPreviousData,
+    // A empresa muda o status (em análise/aprovada) por fora: sem isso o botão "Conversar" só aparece após recarregar a página.
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -22,6 +25,8 @@ export function useMyProjectApplications(filters: ApplicationFilters) {
     queryKey: applicationKeys.list("project", filters),
     queryFn: () => applicationService.projects.list(filters),
     placeholderData: keepPreviousData,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 }
 

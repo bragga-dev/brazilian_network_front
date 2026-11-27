@@ -64,7 +64,8 @@ export function ApplicantCard({ dev, opportunityTitle, opportunityTo, status, st
         </Link>
       </div>
 
-      {actions && <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">{actions}</div>}
+      {/* `empty:hidden`: o painel devolve null para candidatura encerrada; sem isso sobra uma faixa vazia com borda. */}
+      <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3 empty:hidden">{actions}</div>
     </Panel>
   );
 }

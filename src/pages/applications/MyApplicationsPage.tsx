@@ -1,5 +1,5 @@
 import { Briefcase, FolderKanban } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { JobApplicationCard, ProjectApplicationCard } from "@/components/applications/ApplicationCards";
@@ -34,6 +34,11 @@ const CONFIRM_TEXT = {
 
 function JobApplicationsTab({ filters, onPage }: { filters: ApplicationFilters; onPage: (page: number) => void }) {
   const { data, isLoading, isError, error, refetch, isFetching } = useMyJobApplications(filters);
+
+  // Excluiu o último item da última página: volta uma página em vez de mostrar "nenhuma candidatura" com total > 0.
+  useEffect(() => {
+    if (data && data.items.length === 0 && data.total > 0 && filters.page && filters.page > 1) onPage(filters.page - 1);
+  }, [data, filters.page, onPage]);
   const { withdraw, remove } = useJobApplicationMutations();
   const [editing, setEditing] = useState<JobApplication | null>(null);
   const [confirm, setConfirm] = useState<Confirm<JobApplication>>(null);
@@ -91,6 +96,11 @@ function JobApplicationsTab({ filters, onPage }: { filters: ApplicationFilters; 
 
 function ProjectApplicationsTab({ filters, onPage }: { filters: ApplicationFilters; onPage: (page: number) => void }) {
   const { data, isLoading, isError, error, refetch, isFetching } = useMyProjectApplications(filters);
+
+  // Excluiu o último item da última página: volta uma página em vez de mostrar "nenhuma candidatura" com total > 0.
+  useEffect(() => {
+    if (data && data.items.length === 0 && data.total > 0 && filters.page && filters.page > 1) onPage(filters.page - 1);
+  }, [data, filters.page, onPage]);
   const { withdraw, remove } = useProjectApplicationMutations();
   const [editing, setEditing] = useState<ProjectApplication | null>(null);
   const [confirm, setConfirm] = useState<Confirm<ProjectApplication>>(null);

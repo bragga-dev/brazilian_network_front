@@ -7,11 +7,11 @@ import { ConversationList } from "@/components/chat/ConversationList";
 import { buttonClasses } from "@/components/ui/Button";
 import { EmptyState, ErrorState, Spinner } from "@/components/ui/States";
 import { useAuth } from "@/hooks/useAuth";
-import { useConversations } from "@/hooks/useChat";
+import { useChatEligible, useConversations } from "@/hooks/useChat";
 import { cn } from "@/utils/cn";
 import { getErrorMessage } from "@/utils/errors";
 
-const REFRESH_MS = 20_000;
+const REFRESH_MS = 10_000;
 
 /**
  * Tela cheia (o Layout tira o rodapé nesta rota): conversas | conversa aberta | painel da outra parte.
@@ -20,12 +20,30 @@ const REFRESH_MS = 20_000;
 export default function MessagesPage() {
   const { conversationId } = useParams();
   const { me } = useAuth();
+  const eligible = useChatEligible();
   const { data: conversations, isLoading, isFetching, isError, error, refetch } = useConversations(REFRESH_MS);
 
   const role = me?.user.role === "company" ? "company" : "dev";
   const current = conversations?.find((conversation) => conversation.conversation_id === conversationId);
 
+  // Conta não verificada: o back responde 403 e a consulta nem roda. Sem este aviso a tela dizia "nenhuma conversa", o que engana.
+  if (me && !eligible) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16">
+        <EmptyState title="Mensagens indisponíveis">
+          <p>O chat é liberado para contas ativas e verificadas. Confirme seu e-mail para ver e responder suas conversas.</p>
+          <Link to="/perfil?aba=conta" className={buttonClasses("primary", "sm", "mt-5")}>
+            Ir para conta e segurança
+          </Link>
+        </EmptyState>
+      </div>
+    );
+  }
+
   if (isLoading) return <Spinner label="Carregando conversas" />;
+
+  // Acabou de abrir uma conversa nova (lista ainda vazia/desatualizada): espera a lista recarregar em vez de mostrar o vazio.
+  if (conversationId && !current && isFetching) return <Spinner label="Abrindo conversa" />;
 
   if (isError) {
     return (

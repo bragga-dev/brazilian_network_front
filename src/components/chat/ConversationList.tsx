@@ -18,8 +18,10 @@ export function ConversationList({ conversations, role }: Props) {
 
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return conversations;
-    return conversations.filter((conversation) => {
+    // Mais recente primeiro: conversa com mensagem nova sobe para o topo.
+    const sorted = [...conversations].sort((a, b) => Date.parse(b.last_message_at ?? b.created_at) - Date.parse(a.last_message_at ?? a.created_at));
+    if (!term) return sorted;
+    return sorted.filter((conversation) => {
       const other = role === "dev" ? conversation.company : conversation.dev;
       return other.name.toLowerCase().includes(term) || conversation.opportunity_title.toLowerCase().includes(term);
     });

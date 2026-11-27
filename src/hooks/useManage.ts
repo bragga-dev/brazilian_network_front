@@ -17,11 +17,26 @@ export const useManagedJobs = (filters: ListingFilters, enabled = true) =>
 export const useManagedProjects = (filters: ListingFilters, enabled = true) =>
   useQuery({ queryKey: manageKeys.projects(filters), queryFn: () => manageService.projects.list(filters), placeholderData: keepPreviousData, enabled });
 
+/** Candidaturas novas chegam por fora: sempre rebusca ao montar e ao voltar para a aba. */
 export const useReceivedJobs = (filters: ReceivedFilters, enabled = true) =>
-  useQuery({ queryKey: manageKeys.receivedJobs(filters), queryFn: () => manageService.receivedJobs.list(filters), placeholderData: keepPreviousData, enabled });
+  useQuery({
+    queryKey: manageKeys.receivedJobs(filters),
+    queryFn: () => manageService.receivedJobs.list(filters),
+    placeholderData: keepPreviousData,
+    enabled,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+  });
 
 export const useReceivedProjects = (filters: ReceivedFilters, enabled = true) =>
-  useQuery({ queryKey: manageKeys.receivedProjects(filters), queryFn: () => manageService.receivedProjects.list(filters), placeholderData: keepPreviousData, enabled });
+  useQuery({
+    queryKey: manageKeys.receivedProjects(filters),
+    queryFn: () => manageService.receivedProjects.list(filters),
+    placeholderData: keepPreviousData,
+    enabled,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+  });
 
 /** Mudou vaga/projeto ou candidatura: recarrega o painel da empresa, as listagens públicas e a home. */
 function useRefreshAll() {

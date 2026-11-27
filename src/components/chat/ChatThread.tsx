@@ -22,6 +22,7 @@ interface Props {
 }
 
 const NEAR_BOTTOM_PX = 96;
+const POLL_FALLBACK_MS = 8_000;
 
 /** Primeira/meio/última de uma sequência de mensagens seguidas da mesma pessoa. */
 function positionOf(messages: ChatMessage[], index: number): ClusterPosition {
@@ -39,8 +40,9 @@ export function ChatThread({ conversation, myUserId, role }: Props) {
   const other = role === "dev" ? conversation.company : conversation.dev;
   const otherTo = role === "dev" ? `/empresas/${other.id}` : `/devs/${other.id}`;
 
-  const { data: messages, isLoading, isError, error, refetch } = useMessages(conversationId);
   const socket = useChatSocket(conversationId, myUserId);
+  // Sem WebSocket aberto (caiu, ainda conectando, back sem canal), busca por polling para as mensagens novas aparecerem.
+  const { data: messages, isLoading, isError, error, refetch } = useMessages(conversationId, socket === "open" ? false : POLL_FALLBACK_MS);
   const { mutate: markRead } = useMarkRead(myUserId);
 
   const listRef = useRef<HTMLDivElement>(null);

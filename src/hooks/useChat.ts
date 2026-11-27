@@ -29,21 +29,24 @@ export function useConversations(refetchInterval: number | false = false) {
     enabled: eligible,
     staleTime: 0,
     refetchInterval,
+    refetchOnWindowFocus: true,
   });
 }
 
 /** Total de mensagens não lidas, para o ícone do cabeçalho. */
 export function useUnreadMessages(): number {
-  const { data } = useConversations(60_000);
+  const { data } = useConversations(15_000);
   return data?.reduce((total, conversation) => total + conversation.unread_count, 0) ?? 0;
 }
 
-export function useMessages(conversationId: string) {
+/** `refetchInterval`: fallback de polling para quando o WebSocket não está aberto (senão a conversa parece parada). */
+export function useMessages(conversationId: string, refetchInterval: number | false = false) {
   return useQuery({
     queryKey: chatKeys.messages(conversationId),
     queryFn: () => chatService.messages(conversationId),
     staleTime: 0,
     refetchOnWindowFocus: true,
+    refetchInterval,
   });
 }
 
